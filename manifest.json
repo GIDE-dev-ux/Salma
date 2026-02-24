@@ -1,0 +1,15 @@
+{{
+  "name": "Cyber AI Assistant",
+  "short_name": "CyberBot",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#0984e3",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
