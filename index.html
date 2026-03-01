@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Security Chatbot</title>
+  <title>BABI-Bot</title>
 
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
@@ -11,11 +10,16 @@
 
 <body>
 
+  <div class="stats">
+    Messages sent: <span id="msgCount">0</span>
+    <button onclick="clearChat()">Clear</button>
+  </div>
+
   <div class="chat-container">
     <div class="messages" id="messages"></div>
 
     <div class="input-area">
-      <input id="input" placeholder="Ask me anything..." />
+      <input id="input" placeholder="Ask BABI-Bot anything..." />
       <button onclick="sendMessage()">Send</button>
     </div>
   </div>
