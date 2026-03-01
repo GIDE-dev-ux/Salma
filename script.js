@@ -2,7 +2,6 @@
 const messages = document.getElementById("messages");
 const input = document.getElementById("input");
 
-
 // add message to chat
 function addMessage(text, type) {
   const div = document.createElement("div");
@@ -12,7 +11,6 @@ function addMessage(text, type) {
 
   messages.scrollTop = messages.scrollHeight;
 }
-
 
 // send message to server
 async function sendMessage() {
@@ -27,7 +25,7 @@ async function sendMessage() {
   addMessage("Typing...", "bot");
 
   try {
-    const res = await fetch("/.netlify/functions/chat", {
+    const res = await fetch("/api/chat", {   // ✅ FIXED FOR VERCEL
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -37,7 +35,7 @@ async function sendMessage() {
 
     const data = await res.json();
 
-    // remove typing
+    // remove typing message
     messages.lastChild.remove();
 
     // show bot reply
@@ -48,7 +46,6 @@ async function sendMessage() {
     addMessage("Server error. Try again.", "bot");
   }
 }
-
 
 // press Enter to send
 input.addEventListener("keypress", (e) => {
