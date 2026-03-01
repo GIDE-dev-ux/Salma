@@ -50,7 +50,7 @@ export default async function handler(req, res) {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
+          model: "llama3-70b-8192",
           messages: [
             { role: "system", content: "You are BABI-Bot, a friendly AI assistant." },
             ...history,
@@ -62,11 +62,11 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (!data.choices || !data.choices[0]) {
-      return res.status(500).json({
-        reply: "AI service unavailable.",
-      });
-    }
+if (!response.ok) {
+  return res.status(response.status).json({
+    reply: data.error?.message || "Groq API error"
+  });
+}
 
     return res.status(200).json({
       reply: data.choices[0].message.content,
