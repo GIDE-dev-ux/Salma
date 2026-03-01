@@ -1,4 +1,4 @@
-const CACHE =  "chatbot-cache-v2";
+const CACHE = "babi-cache-v1";
 
 const filesToCache = [
   "/",
@@ -14,6 +14,8 @@ self.addEventListener("install", event => {
 });
 
 self.addEventListener("fetch", event => {
+  if (event.request.url.includes("/api/")) return;
+
   event.respondWith(
     caches.match(event.request).then(res => res || fetch(event.request))
   );
