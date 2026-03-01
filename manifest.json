@@ -1,10 +1,10 @@
 {
-  "name": "Cyber AI Assistant",
-  "short_name": "CyberBot",
+  "name": "BABI-Bot",
+  "short_name": "BABI",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#111111",
-  "theme_color": "#0984e3",
+  "theme_color": "#ff0080",
   "icons": [
     {
       "src": "favicon.png",
