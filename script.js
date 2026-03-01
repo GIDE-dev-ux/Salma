@@ -1,53 +1,78 @@
-// get elements
 const messages = document.getElementById("messages");
 const input = document.getElementById("input");
+const msgCount = document.getElementById("msgCount");
 
-// add message to chat
+let conversationHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+let stats = JSON.parse(localStorage.getItem("chatStats")) || { messages: 0 };
+
+msgCount.innerText = stats.messages;
+
+// Load previous messages
+conversationHistory.forEach(msg => {
+  addMessage(msg.content, msg.role === "user" ? "user" : "bot");
+});
+
 function addMessage(text, type) {
   const div = document.createElement("div");
   div.className = "msg " + type;
   div.innerText = text;
   messages.appendChild(div);
-
   messages.scrollTop = messages.scrollHeight;
 }
 
-// send message to server
 async function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  // show user message
   addMessage(text, "user");
+  conversationHistory.push({ role: "user", content: text });
   input.value = "";
 
-  // show typing
-  addMessage("Typing...", "bot");
+  stats.messages++;
+  localStorage.setItem("chatStats", JSON.stringify(stats));
+  msgCount.innerText = stats.messages;
+
+  const typingDiv = document.createElement("div");
+  typingDiv.className = "msg bot";
+  typingDiv.innerText = "Typing...";
+  messages.appendChild(typingDiv);
 
   try {
-    const res = await fetch("/api/chat", {   // ✅ FIXED FOR VERCEL
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message: text })
+      body: JSON.stringify({
+        message: text,
+        history: conversationHistory
+      }),
     });
 
     const data = await res.json();
 
-    // remove typing message
-    messages.lastChild.remove();
-
-    // show bot reply
+    typingDiv.remove();
     addMessage(data.reply, "bot");
 
+    conversationHistory.push({
+      role: "assistant",
+      content: data.reply
+    });
+
+    localStorage.setItem("chatHistory", JSON.stringify(conversationHistory));
+
   } catch (err) {
-    messages.lastChild.remove();
+    typingDiv.remove();
     addMessage("Server error. Try again.", "bot");
   }
 }
 
-// press Enter to send
+function clearChat() {
+  localStorage.removeItem("chatHistory");
+  conversationHistory = [];
+  messages.innerHTML = "";
+}
+
 input.addEventListener("keypress", (e) => {
   if (e.key === "Enter") {
     sendMessage();
