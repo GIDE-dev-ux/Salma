@@ -50,7 +50,8 @@ export default async function handler(req, res) {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "llama3-8b-8192",
+          model: "llama-3.1-8b-instant",
+(That is a current working Groq model.)
           messages: [
             { role: "system", content: "You are BABI-Bot, a friendly AI assistant." },
             ...history,
