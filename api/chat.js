@@ -51,7 +51,6 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
-(That is a current working Groq model.)
           messages: [
             { role: "system", content: "You are BABI-Bot, a friendly AI assistant." },
             ...history,
