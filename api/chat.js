@@ -33,13 +33,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, history = [] } = req.body;
 
-    if (!message) {
-      return res.status(400).json({
-        reply: "Message is required.",
-      });
-    }
+const { message, history = [] } = req.body;
+
+const trimmedHistory = history.slice(-10);
+
+if (!message) {
+  return res.status(400).json({
+    reply: "Message is required."
+  });
+}
 
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -50,8 +53,9 @@ export default async function handler(req, res) {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [
+  model: "llama-3.1-8b-instant",
+  temperature: 0.7,
+  messages: [
             { role: "system", content: "You are BABI-Bot, a friendly AI assistant." },
             ...history,
             { role: "user", content: message },
@@ -69,7 +73,7 @@ if (!response.ok) {
 }
 
     return res.status(200).json({
-      reply: data.choices[0].message.content,
+      reply: data?.choices?.[0]?.message?.content || "No response from AI.",
     });
 
   } catch (error) {
@@ -77,4 +81,4 @@ if (!response.ok) {
       reply: "Server error. Check API key.",
     });
   }
-}
+    }
