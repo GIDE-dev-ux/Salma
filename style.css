@@ -55,7 +55,7 @@ body {
 }
 
 .bot {
-  background: #1a1a1a;
+  background: #222;
   color: #fff;
   border-bottom-left-radius: 5px;
 }
@@ -94,4 +94,4 @@ button {
     opacity: 1;
     transform: translateY(0);
   }
-  }
+    }
