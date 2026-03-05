@@ -1,5 +1,6 @@
 const messages = document.getElementById("messages");
 const input = document.getElementById("input");
+const imageUpload = document.getElementById("imageUpload");
 const msgCount = document.getElementById("msgCount");
 
 let conversationHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
@@ -27,7 +28,7 @@ async function sendMessage() {
   addMessage(text, "user");
   conversationHistory.push({ role: "user", content: text });
   input.value = "";
-
+imageUpload.value = "";
   stats.messages++;
   localStorage.setItem("chatStats", JSON.stringify(stats));
   msgCount.innerText = stats.messages;
@@ -44,10 +45,10 @@ async function sendMessage() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: text,
-        history: conversationHistory
-      }),
-    });
+  message: text,
+  history: conversationHistory
+})
+});
 
     const data = await res.json();
 
