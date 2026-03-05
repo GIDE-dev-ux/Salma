@@ -38,22 +38,26 @@ body {
 }
 
 .msg {
-  padding: 12px 15px;
-  margin: 8px 0;
-  border-radius: 18px;
-  max-width: 80%;
+  padding: 14px 16px;
+  margin: 10px 0;
+  border-radius: 20px;
+  max-width: 75%;
   font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
 }
 
 .user {
   background: linear-gradient(45deg, #ff0080, #ff8c00);
   color: white;
   margin-left: auto;
+  border-bottom-right-radius: 5px;
 }
 
 .bot {
-  background: #222;
+  background: #1a1a1a;
   color: #fff;
+  border-bottom-left-radius: 5px;
 }
 
 .input-area {
@@ -77,3 +81,17 @@ button {
   color: white;
   cursor: pointer;
 }
+.msg {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  }
