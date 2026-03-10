@@ -4,8 +4,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
+  overflow: hidden;
 }
 
 .stats {
@@ -22,7 +23,7 @@ body {
 .chat-container {
   width: 95%;
   max-width: 420px;
-  height: 85vh;
+  height: 75vh;
   background: #111;
   border-radius: 25px;
   display: flex;
@@ -94,4 +95,17 @@ button {
     opacity: 1;
     transform: translateY(0);
   }
-    }
+}
+.logo{
+width:80px;
+height:80px;
+object-fit:cover;
+margin-top:5px;
+}
+
+.header{
+display:flex;
+flex-direction:column;
+align-items:center;
+color:white;
+  }
