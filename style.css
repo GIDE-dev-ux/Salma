@@ -6,7 +6,7 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  overflow: hidden;
+  overflow-y:auto;
 }
 
 .stats {
@@ -23,7 +23,7 @@ body {
 .chat-container {
   width: 95%;
   max-width: 420px;
-  height: 75vh;
+  height: 65vh;
   background: #111;
   border-radius: 25px;
   display: flex;
@@ -108,4 +108,18 @@ display:flex;
 flex-direction:column;
 align-items:center;
 color:white;
-  }
+}
+.input-area{
+position:sticky;
+bottom:0;
+width:100%;
+display:flex;
+background:#000;
+}
+
+.messages{
+flex:1;
+overflow-y:auto;
+padding:15px;
+height:100%;
+    }
