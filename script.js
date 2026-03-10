@@ -164,4 +164,4 @@ function typeMessage(text) {
     }
 
   }, 20);
-  }
+}
