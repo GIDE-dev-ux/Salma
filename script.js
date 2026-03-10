@@ -80,7 +80,12 @@ if (file) {
   if (text) {
   addMessage(text, "user");
 }
-  conversationHistory.push({ role: "user", content: text });
+  conversationHistory.push({
+  role: "user",
+  content: [
+    { type: "text", text: text }
+  ]
+});
   input.value = "";
   stats.messages++;
   localStorage.setItem("chatStats", JSON.stringify(stats));
@@ -109,9 +114,11 @@ imageUpload.value = "";
     typeMessage(data.reply);
 
     conversationHistory.push({
-      role: "assistant",
-      content: data.reply
-    });
+  role: "assistant",
+  content: [
+    { type: "text", text: data.reply }
+  ]
+});
 
     localStorage.setItem("chatHistory", JSON.stringify(conversationHistory));
 
@@ -157,4 +164,4 @@ function typeMessage(text) {
     }
 
   }, 20);
-}
+  }
