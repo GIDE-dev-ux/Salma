@@ -23,6 +23,27 @@ function addMessage(text, type) {
 
 async function sendMessage() {
   const text = input.value.trim();
+  const file = imageUpload.files[0];
+
+if (file) {
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const img = document.createElement("img");
+    img.src = e.target.result;
+    img.style.maxWidth = "150px";
+    img.style.borderRadius = "10px";
+
+    const div = document.createElement("div");
+    div.className = "msg user";
+    div.appendChild(img);
+
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  };
+
+  reader.readAsDataURL(file);
+}
   if (!text) return;
 
   addMessage(text, "user");
