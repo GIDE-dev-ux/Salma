@@ -147,7 +147,7 @@ function typeMessage(text) {
   let i = 0;
 
   const interval = setInterval(() => {
-    div.innerText += text.charAt(i);
+    div.textContent += text.charAt(i);
     i++;
 
     messages.scrollTop = messages.scrollHeight;
@@ -157,4 +157,4 @@ function typeMessage(text) {
     }
 
   }, 20);
-             }
+}
