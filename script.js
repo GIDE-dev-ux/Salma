@@ -1,6 +1,6 @@
 const messages = document.getElementById("messages");
 const input = document.getElementById("input");
-const imageUpload = document.getElementById("imageUpload");
+const imageUpload = document.getElementById("imageInput");
 const msgCount = document.getElementById("msgCount");
 
 let conversationHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
@@ -20,33 +20,66 @@ function addMessage(text, type) {
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
+const fileInput = document.getElementById("imageInput");
 
+fileInput.addEventListener("change", function () {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+    const img = document.createElement("img");
+    img.src = e.target.result;
+    img.style.maxWidth = "200px";
+    img.style.borderRadius = "10px";
+
+    document.getElementById("messages").appendChild(img);
+  };
+
+  reader.readAsDataURL(file);
+});
 async function sendMessage() {
   const text = input.value.trim();
   const file = imageUpload.files[0];
-
-if (file) {
+  let imageData = null;
+  if (file) {
   const reader = new FileReader();
 
   reader.onload = function(e) {
+
+    const div = document.createElement("div");
+    div.className = "msg user";
+
     const img = document.createElement("img");
     img.src = e.target.result;
     img.style.maxWidth = "150px";
     img.style.borderRadius = "10px";
 
-    const div = document.createElement("div");
-    div.className = "msg user";
     div.appendChild(img);
-
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
+
   };
 
   reader.readAsDataURL(file);
 }
-  if (!text) return;
 
+if (file) {
+  const reader = new FileReader();
+
+  imageData = await new Promise(resolve => {
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
+}
+
+
+  if (!text && !file) return;
+
+  if (text) {
   addMessage(text, "user");
+}
   conversationHistory.push({ role: "user", content: text });
   input.value = "";
   stats.messages++;
@@ -56,7 +89,7 @@ if (file) {
   const typingDiv = document.createElement("div");
   typingDiv.className = "msg bot";
   typingDiv.innerText = "BABI-Bot is typing...";
-
+messages.appendChild(typingDiv);
   try {
     const res = await fetch("/api/chat", {
       method: "POST",
@@ -65,14 +98,15 @@ if (file) {
       },
       body: JSON.stringify({
   message: text,
-  history: conversationHistory
+  history: conversationHistory,
+  image: imageData
 })
 });
 
     const data = await res.json();
 imageUpload.value = "";
     typingDiv.remove();
-    addMessage(data.reply, "bot");
+    typeMessage(data.reply);
 
     conversationHistory.push({
       role: "assistant",
@@ -98,3 +132,29 @@ input.addEventListener("keypress", (e) => {
     sendMessage();
   }
 });
+function convertImage(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
+}
+function typeMessage(text) {
+  const div = document.createElement("div");
+  div.className = "msg bot";
+  messages.appendChild(div);
+
+  let i = 0;
+
+  const interval = setInterval(() => {
+    div.innerText += text.charAt(i);
+    i++;
+
+    messages.scrollTop = messages.scrollHeight;
+
+    if (i >= text.length) {
+      clearInterval(interval);
+    }
+
+  }, 20);
+             }
