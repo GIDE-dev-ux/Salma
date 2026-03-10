@@ -1,4 +1,4 @@
-const CACHE = "babi-bot-v3";
+const CACHE = "babi-bot-v4";
 
 self.addEventListener("install", e => {
   e.waitUntil(
