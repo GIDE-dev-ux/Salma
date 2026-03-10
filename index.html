@@ -1,43 +1,60 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BABI-Bot</title>
+export default async function handler(req, res) {
 
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="favicon.png">
-<link rel="stylesheet" href="style.css">
-</head>
+const { message, history, image } = req.body;
 
-<body>
+const apiKey = process.env.GROQ_API_KEY;
 
-  <div class="stats">
-    Messages sent: <span id="msgCount">0</span>
-    <button onclick="clearChat()">Clear</button>
-  </div>
-<div class="header">
-  <img src="favicon.png" class="logo">
-  <h2>BABI-Bot</h2>
-</div>
-  <div class="chat-container">
-    <div class="messages" id="messages"></div>
+let content = [];
 
-    <div class="input-area">
-  <input id="input" placeholder="Ask BABI-Bot anything..." />
-  
-  <input type="file" id="imageInput" accept="image/*">
-  
-  <button onclick="sendMessage()">Send</button>
-</div>
-  </div>
+if (message) {
+content.push({
+type: "text",
+text: message
+});
+}
 
-  <script src="script.js"></script>
+if (image) {
+content.push({
+type: "image_url",
+image_url: {
+url: image
+}
+});
+}
 
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
+try {
 
-</body>
-  </html>
+const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+"Authorization": `Bearer ${apiKey}`
+},
+body: JSON.stringify({
+model: "llama-3.2-11b-vision-preview",
+stream: false,
+messages: [
+...history,
+{
+role: "user",
+content: content
+}
+]
+})
+});
+
+const data = await response.json();
+
+res.status(200).json({
+reply: data.choices[0].message.content
+});
+
+} catch (error) {
+
+res.status(500).json({
+reply: "Error analyzing image or message."
+});
+
+}
+
+}
