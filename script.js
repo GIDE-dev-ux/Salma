@@ -28,15 +28,13 @@ async function sendMessage() {
   addMessage(text, "user");
   conversationHistory.push({ role: "user", content: text });
   input.value = "";
-imageUpload.value = "";
   stats.messages++;
   localStorage.setItem("chatStats", JSON.stringify(stats));
   msgCount.innerText = stats.messages;
 
   const typingDiv = document.createElement("div");
   typingDiv.className = "msg bot";
-  typingDiv.innerText = "Typing...";
-  messages.appendChild(typingDiv);
+  typingDiv.innerText = "BABI-Bot is typing...";
 
   try {
     const res = await fetch("/api/chat", {
@@ -51,7 +49,7 @@ imageUpload.value = "";
 });
 
     const data = await res.json();
-
+imageUpload.value = "";
     typingDiv.remove();
     addMessage(data.reply, "bot");
 
