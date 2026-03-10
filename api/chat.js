@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
 
-const { message, history, image } = req.body;
+const { message, history = [], image } = req.body;
 
 const apiKey = process.env.GROQ_API_KEY;
 
@@ -32,7 +32,6 @@ headers: {
 },
 body: JSON.stringify({
 model: "llama-3.2-11b-vision-preview",
-stream: false,
 messages: [
 ...history,
 {
@@ -46,13 +45,13 @@ content: content
 const data = await response.json();
 
 res.status(200).json({
-reply: data.choices[0].message.content
+reply: data.choices?.[0]?.message?.content || "No response from AI"
 });
 
 } catch (error) {
 
 res.status(500).json({
-reply: "Error analyzing image or message."
+reply: "Server error while analyzing message or image."
 });
 
 }
