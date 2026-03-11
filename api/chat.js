@@ -34,7 +34,7 @@ try {
       "Authorization": `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: "llama-3.3-70b-versatile",
+      model: "llama-3.2-90b-vision-preview",
       messages: [
         ...history.map(m => ({
           role: m.role,
