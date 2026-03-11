@@ -28,27 +28,19 @@ if (image) {
 try {
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model: "llama-3.2-90b-vision-preview",
-      messages: [
-        ...history.map(m => ({
-          role: m.role,
-          content: typeof m.content === "string"
-            ? m.content
-            : JSON.stringify(m.content)
-        })),
-        {
-          role: "user",
-          content: content
-        }
-      ]
-    })
-  });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${apiKey}`
+  },
+  body: JSON.stringify({
+    model: "llama-3.1-8b-instant",
+    messages: [
+      ...history,
+      { role: "user", content: content }
+    ]
+  })
+});
 
   const data = await response.json();
 
@@ -70,4 +62,4 @@ try {
 
 }
 
-    }
+}
