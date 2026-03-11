@@ -1,5 +1,9 @@
 export default async function handler(req, res) {
 
+if (req.method !== "POST") {
+return res.status(405).json({ error: "Method not allowed" });
+}
+
 const { message, history = [], image } = req.body;
 
 const apiKey = process.env.GROQ_API_KEY;
@@ -45,7 +49,7 @@ content: content
 const data = await response.json();
 
 res.status(200).json({
-reply: data.choices?.[0]?.message?.content || "No response from AI"
+reply: data?.choices?.[0]?.message?.content || "No response from AI"
 });
 
 } catch (error) {
