@@ -156,12 +156,23 @@ padding:15px;
 }
 
 .input-area{
+position:sticky;
+bottom:0;
+width:100%;
+display:flex;
+align-items:center;
+gap:6px;
+padding:8px;
+background:#000;
 border-top:1px solid #333;
-padding:10px;
 }
+
 .upload-btn{
 color:white;
-font-size:20px;
-padding:10px;
+font-size:22px;
+padding:8px;
 cursor:pointer;
-}
+display:flex;
+align-items:center;
+justify-content:center;
+  }
