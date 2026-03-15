@@ -115,6 +115,7 @@ bottom:0;
 width:100%;
 display:flex;
 background:#000;
+z-index:10;
 }
 
 .messages{
