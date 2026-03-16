@@ -20,41 +20,22 @@ function addMessage(text, type) {
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
-const fileInput = document.getElementById("imageInput");
 
-fileInput.addEventListener("change", function () {
-  const file = fileInput.files[0];
+// Image preview
+imageUpload.addEventListener("change", function () {
+
+  const file = imageUpload.files[0];
   if (!file) return;
 
   const reader = new FileReader();
 
   reader.onload = function (e) {
-    const img = document.createElement("img");
-    img.src = e.target.result;
-    img.style.maxWidth = "200px";
-    img.style.borderRadius = "10px";
-
-    document.getElementById("messages").appendChild(img);
-  };
-
-  reader.readAsDataURL(file);
-});
-async function sendMessage() {
-  const text = input.value.trim();
-  const file = imageUpload.files[0];
-  let imageData = null;
-  if (file) {
-  const reader = new FileReader();
-
-  reader.onload = function(e) {
 
     const div = document.createElement("div");
     div.className = "msg user";
 
     const img = document.createElement("img");
     img.src = e.target.result;
-    img.style.maxWidth = "150px";
-    img.style.borderRadius = "10px";
 
     div.appendChild(img);
     messages.appendChild(div);
@@ -63,30 +44,34 @@ async function sendMessage() {
   };
 
   reader.readAsDataURL(file);
-}
+});
 
-if (file) {
-  const reader = new FileReader();
+async function sendMessage() {
 
-  imageData = await new Promise(resolve => {
-    reader.onload = () => resolve(reader.result);
-    reader.readAsDataURL(file);
-  });
-}
+  const text = input.value.trim();
+  const file = imageUpload.files[0];
 
+  let imageData = null;
+
+  if (file) {
+    imageData = await convertImage(file);
+  }
 
   if (!text && !file) return;
 
   if (text) {
-  addMessage(text, "user");
-}
+    addMessage(text, "user");
+  }
+
   conversationHistory.push({
-  role: "user",
-  content: [
-    { type: "text", text: text }
-  ]
-});
+    role: "user",
+    content: [
+      { type: "text", text: text }
+    ]
+  });
+
   input.value = "";
+
   stats.messages++;
   localStorage.setItem("chatStats", JSON.stringify(stats));
   msgCount.innerText = stats.messages;
@@ -94,59 +79,78 @@ if (file) {
   const typingDiv = document.createElement("div");
   typingDiv.className = "msg bot";
   typingDiv.innerText = "BABI-Bot is typing...";
-messages.appendChild(typingDiv);
+  messages.appendChild(typingDiv);
+
   try {
+
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-  message: text,
-  history: conversationHistory,
-  image: imageData
-})
-});
+        message: text,
+        history: conversationHistory,
+        image: imageData
+      })
+    });
 
     const data = await res.json();
-imageUpload.value = "";
+
+    imageUpload.value = "";
+
     typingDiv.remove();
+
     typeMessage(data.reply);
 
     conversationHistory.push({
-  role: "assistant",
-  content: [
-    { type: "text", text: data.reply }
-  ]
-});
+      role: "assistant",
+      content: [
+        { type: "text", text: data.reply }
+      ]
+    });
 
     localStorage.setItem("chatHistory", JSON.stringify(conversationHistory));
 
   } catch (err) {
+
     typingDiv.remove();
     addMessage("Server error. Try again.", "bot");
+
   }
+
 }
 
 function clearChat() {
+
   localStorage.removeItem("chatHistory");
   conversationHistory = [];
   messages.innerHTML = "";
+
 }
 
 input.addEventListener("keypress", (e) => {
+
   if (e.key === "Enter") {
     sendMessage();
   }
+
 });
+
 function convertImage(file) {
+
   return new Promise((resolve) => {
+
     const reader = new FileReader();
     reader.onloadend = () => resolve(reader.result);
     reader.readAsDataURL(file);
+
   });
+
 }
+
 function typeMessage(text) {
+
   const div = document.createElement("div");
   div.className = "msg bot";
   messages.appendChild(div);
@@ -154,6 +158,7 @@ function typeMessage(text) {
   let i = 0;
 
   const interval = setInterval(() => {
+
     div.textContent += text.charAt(i);
     i++;
 
@@ -164,4 +169,5 @@ function typeMessage(text) {
     }
 
   }, 20);
-}
+
+      }
