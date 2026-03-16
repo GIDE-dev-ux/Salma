@@ -1,60 +1,46 @@
-export default async function handler(req, res) {
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BABI-Bot</title>
 
-const { message, history, image } = req.body;
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
 
-const apiKey = process.env.GROQ_API_KEY;
+<body>
 
-let content = [];
+  <div class="stats">
+    Messages sent: <span id="msgCount">0</span>
+    <button onclick="clearChat()">Clear</button>
+  </div>
+<div class="header">
+  <img src="favicon.png" class="logo">
+  <h2>BABI-Bot</h2>
+</div>
+  <div class="chat-container">
+    <div class="messages" id="messages"></div>
 
-if (message) {
-content.push({
-type: "text",
-text: message
-});
-}
+    <div class="input-area">
 
-if (image) {
-content.push({
-type: "image_url",
-image_url: {
-url: image
-}
-});
-}
+<input id="input" placeholder="Message BABI-Bot..." />
 
-try {
+<label for="imageInput" class="upload-btn">📷</label>
+<input type="file" id="imageInput" accept="image/*" hidden>
 
-const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-"Authorization": `Bearer ${apiKey}`
-},
-body: JSON.stringify({
-model: "llama-3.2-11b-vision-preview",
-stream: false,
-messages: [
-...history,
-{
-role: "user",
-content: content
-}
-]
-})
-});
+<button onclick="sendMessage()">➤</button>
 
-const data = await response.json();
+</div>
+  </div>
 
-res.status(200).json({
-reply: data.choices[0].message.content
-});
+  <script src="script.js"></script>
 
-} catch (error) {
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
 
-res.status(500).json({
-reply: "Error analyzing image or message."
-});
-
-}
-
-}
+</body>
+  </html>
