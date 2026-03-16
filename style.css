@@ -23,7 +23,7 @@ body {
 .chat-container {
   width: 95%;
   max-width: 420px;
-  height: 80vh;
+  height: calc(100vh - 160px);
   background: #111;
   border-radius: 25px;
   display: flex;
