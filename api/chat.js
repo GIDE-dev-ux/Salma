@@ -34,7 +34,7 @@ try {
     "Authorization": `Bearer ${apiKey}`
   },
   body: JSON.stringify({
-    model: "llama-3.1-8b-instant",
+    model: "llama-3.2-11b-vision-preview",
     messages: [
       ...history,
       { role: "user", content: content }
@@ -62,4 +62,4 @@ try {
 
 }
 
-}
+    }
