@@ -10,27 +10,28 @@ msgCount.innerText = stats.messages;
 
 // Load previous messages
 conversationHistory.forEach(msg => {
-  addMessage(msg.content, msg.role === "user" ? "user" : "bot");
+  addMessage(
+    msg.content?.[0]?.text || "[Image]",
+    msg.role === "user" ? "user" : "bot"
+  );
 });
 
 function addMessage(text, type) {
   const div = document.createElement("div");
   div.className = "msg " + type;
-  div.innerText = text;
+  div.innerHTML = text.replace(/```([\s\S]*?)```/g, "<pre>$1</pre>");
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 }
 
 // Image preview
 imageUpload.addEventListener("change", function () {
-
   const file = imageUpload.files[0];
   if (!file) return;
 
   const reader = new FileReader();
 
   reader.onload = function (e) {
-
     const div = document.createElement("div");
     div.className = "msg user";
 
@@ -40,16 +41,25 @@ imageUpload.addEventListener("change", function () {
     div.appendChild(img);
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
-
   };
 
   reader.readAsDataURL(file);
 });
 
 async function sendMessage() {
-
-  const text = input.value.trim();
+  let text = input.value.trim();
   const file = imageUpload.files[0];
+
+  const mode = document.getElementById("mode");
+
+  // 🔥 Mode logic
+  if (mode && mode.value === "code") {
+    text = "Write clean, working code for: " + text;
+  }
+
+  if (mode && mode.value === "debug") {
+    text = "Fix this code and explain the error: " + text;
+  }
 
   let imageData = null;
 
@@ -60,27 +70,27 @@ async function sendMessage() {
   if (!text && !file) return;
 
   if (text) {
-  addMessage(text, "user");
-}
+    addMessage(text, "user");
+  }
 
-// 🔥 NEW FIX (supports image + text)
-let userContent = [];
+  // 🔥 Combine text + image
+  let userContent = [];
 
-if (text) {
-  userContent.push({ type: "text", text: text });
-}
+  if (text) {
+    userContent.push({ type: "text", text: text });
+  }
 
-if (imageData) {
-  userContent.push({
-    type: "image_url",
-    image_url: { url: imageData }
+  if (imageData) {
+    userContent.push({
+      type: "image_url",
+      image_url: { url: imageData }
+    });
+  }
+
+  conversationHistory.push({
+    role: "user",
+    content: userContent
   });
-}
-
-conversationHistory.push({
-  role: "user",
-  content: userContent
-});
 
   input.value = "";
 
@@ -94,7 +104,6 @@ conversationHistory.push({
   messages.appendChild(typingDiv);
 
   try {
-
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: {
@@ -110,7 +119,6 @@ conversationHistory.push({
     const data = await res.json();
 
     imageUpload.value = "";
-
     typingDiv.remove();
 
     typeMessage(data.reply);
@@ -125,44 +133,32 @@ conversationHistory.push({
     localStorage.setItem("chatHistory", JSON.stringify(conversationHistory));
 
   } catch (err) {
-
     typingDiv.remove();
     addMessage("Server error. Try again.", "bot");
-
   }
-
 }
 
 function clearChat() {
-
   localStorage.removeItem("chatHistory");
   conversationHistory = [];
   messages.innerHTML = "";
-
 }
 
 input.addEventListener("keypress", (e) => {
-
   if (e.key === "Enter") {
     sendMessage();
   }
-
 });
 
 function convertImage(file) {
-
   return new Promise((resolve) => {
-
     const reader = new FileReader();
     reader.onloadend = () => resolve(reader.result);
     reader.readAsDataURL(file);
-
   });
-
 }
 
 function typeMessage(text) {
-
   const div = document.createElement("div");
   div.className = "msg bot";
   messages.appendChild(div);
@@ -170,7 +166,6 @@ function typeMessage(text) {
   let i = 0;
 
   const interval = setInterval(() => {
-
     div.textContent += text.charAt(i);
     i++;
 
@@ -179,7 +174,5 @@ function typeMessage(text) {
     if (i >= text.length) {
       clearInterval(interval);
     }
-
   }, 20);
-
-  }
+}
