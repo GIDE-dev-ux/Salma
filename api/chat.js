@@ -36,9 +36,13 @@ try {
   body: JSON.stringify({
     model: "llama-3.1-8b-instant",
     messages: [
-      ...history,
-      { role: "user", content: content }
-    ]
+  {
+    role: "system",
+    content: "You are BABI-Bot, a powerful coding assistant. Help the user write, debug, and understand code. Always give clear explanations. If the user asks for code, provide clean and complete examples."
+  },
+  ...history,
+  { role: "user", content: content }
+]
   })
 });
 
@@ -62,4 +66,4 @@ try {
 
 }
 
-    }
+}
