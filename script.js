@@ -60,15 +60,27 @@ async function sendMessage() {
   if (!text && !file) return;
 
   if (text) {
-    addMessage(text, "user");
-  }
+  addMessage(text, "user");
+}
 
-  conversationHistory.push({
-    role: "user",
-    content: [
-      { type: "text", text: text }
-    ]
+// 🔥 NEW FIX (supports image + text)
+let userContent = [];
+
+if (text) {
+  userContent.push({ type: "text", text: text });
+}
+
+if (imageData) {
+  userContent.push({
+    type: "image_url",
+    image_url: { url: imageData }
   });
+}
+
+conversationHistory.push({
+  role: "user",
+  content: userContent
+});
 
   input.value = "";
 
@@ -170,4 +182,4 @@ function typeMessage(text) {
 
   }, 20);
 
-      }
+  }
