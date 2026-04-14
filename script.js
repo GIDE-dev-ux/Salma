@@ -1,4 +1,4 @@
-// ==================== BETTER MOBILE KEYBOARD HANDLING FOR TECNO POP 7 PRO ====================
+// ==================== BETTER MOBILE KEYBOARD HANDLING ====================
 if ('visualViewport' in window) {
   const messagesContainer = document.getElementById('messages');
   
@@ -25,12 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let messageCount = 0;
 
+  // Updated Smaller Welcome Message
   function addWelcome() {
     messagesDiv.innerHTML = `
-      <div class="h-full flex flex-col items-center justify-center text-center px-6 py-12">
-        <div class="text-7xl mb-6">❤️</div>
-        <h2 class="text-3xl font-light text-white">Hi, I'm BABI-Bot</h2>
-        <p class="text-gray-400 mt-4 text-lg">Your friendly AI assistant.<br>Ask me anything!</p>
+      <div>
+        <div class="heart text-7xl mb-8">❤️</div>
+        <h2 class="text-2xl font-light">Hi, I'm BABI-Bot</h2>
+        <p class="text-gray-400 mt-3 text-base">Your friendly AI assistant.<br>Ask me anything!</p>
       </div>
     `;
   }
@@ -67,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sendBtn.textContent = '…';
 
     try {
-      // ✅ THIS IS THE CORRECT LINE - Calling your own api/chat.js
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -76,9 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error('Failed to get response');
 
       const data = await response.json();
       const aiReply = data.reply || "Sorry, I couldn't generate a response right now.";
@@ -97,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     countEl.textContent = `${messageCount} messages`;
   });
 
-  // Extra delay for Tecno Pop 7 Pro keyboard
+  // Extra scroll for keyboard on Tecno Pop 7 Pro
   input.addEventListener('focus', () => {
     setTimeout(scrollToBottom, 300);
   });
