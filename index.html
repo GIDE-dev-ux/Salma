@@ -1,50 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BABI-Bot</title>
-
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="favicon.png">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+  <title>BABI-Bot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
+<body class="bg-[#0a0a0a] text-white h-screen w-screen overflow-hidden flex flex-col">
 
-<body>
-
-  <div class="stats">
-    Messages sent: <span id="msgCount">0</span>
-    <button onclick="clearChat()">Clear</button>
+  <!-- Header -->
+  <div class="h-14 bg-[#111] border-b border-gray-800 flex items-center px-4 flex-shrink-0 z-10">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center text-xl">
+        ❤️
+      </div>
+      <div>
+        <h1 class="font-semibold text-lg tracking-tight">BABI-Bot</h1>
+        <p class="text-xs text-gray-400">Powered by Groq</p>
+      </div>
+    </div>
+    <div id="message-count" class="ml-auto text-xs text-gray-500">
+      0 messages
+    </div>
   </div>
-<div class="header">
-  <img src="favicon.png" class="logo">
-  <h2>BABI-Bot</h2>
-</div>
-  <div class="chat-container">
-    <div class="messages" id="messages"></div>
 
-    <div class="input-area">
-<select id="mode">
-  <option value="normal">Normal</option>
-  <option value="code">Code</option>
-  <option value="debug">Debug</option>
-</select>
-<input id="input" placeholder="Message BABI-Bot..." />
+  <!-- Messages Area -->
+  <div id="messages" class="flex-1 overflow-y-auto p-5 space-y-6 bg-[#0a0a0a] scroll-smooth">
+    <!-- Welcome message added by JS -->
+  </div>
 
-<label for="imageInput" class="upload-btn">📷</label>
-<input type="file" id="imageInput" accept="image/*" hidden>
-
-<button onclick="sendMessage()">➤</button>
-
-</div>
+  <!-- Input Area -->
+  <div class="bg-[#0a0a0a] border-t border-gray-800 p-3 flex-shrink-0 safe-area-bottom">
+    <form id="chat-form" class="flex gap-2">
+      <input 
+        id="user-input"
+        type="text"
+        inputmode="text"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        class="flex-1 bg-gray-900 border border-gray-700 focus:border-orange-500 rounded-3xl px-6 py-4 text-white placeholder-gray-500 focus:outline-none"
+        placeholder="Message BABI-Bot..."
+      >
+      <button 
+        type="submit"
+        id="send-btn"
+        class="bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 px-8 rounded-3xl font-medium active:scale-95 transition-all min-w-[70px]"
+      >
+        Send
+      </button>
+    </form>
+    
+    <p class="text-center text-[10px] text-gray-500 mt-3">
+      BABI-Bot • Powered by Groq • Fast AI
+    </p>
   </div>
 
   <script src="script.js"></script>
-
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
-
 </body>
-</html>
+    </html>
