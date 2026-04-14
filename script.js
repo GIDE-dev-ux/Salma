@@ -1,17 +1,9 @@
 // ==================== BETTER MOBILE KEYBOARD HANDLING ====================
 if ('visualViewport' in window) {
   const messagesContainer = document.getElementById('messages');
-  
   window.visualViewport.addEventListener('resize', () => {
-    const vh = window.visualViewport.height;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-    
-    setTimeout(() => {
-      messagesContainer.scrollTo({
-        top: messagesContainer.scrollHeight,
-        behavior: 'smooth'
-      });
-    }, 100);
+    document.documentElement.style.setProperty('--vh', `${window.visualViewport.height}px`);
+    setTimeout(() => messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' }), 100);
   });
 }
 
@@ -25,18 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let messageCount = 0;
 
-  // === PUT YOUR GROQ API KEY HERE ===
-  const GROQ_API_KEY = "gsk_YourActualKeyHere1234567890";   // ← CHANGE THIS
+  // ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+  const GROQ_API_KEY = "gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; 
+  // REPLACE WITH YOUR REAL GROQ KEY FROM https://console.groq.com/keys
+  // ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 
-  // Welcome Message
   function addWelcome() {
     messagesDiv.innerHTML = `
       <div class="h-full flex flex-col items-center justify-center text-center px-6 py-12">
         <div class="text-7xl mb-6">❤️</div>
-        <h2 class="text-3xl font-light text-white">Hi, I'm BABI-Bot</h2>
-        <p class="text-gray-400 mt-4 text-lg max-w-[280px]">
-          Your friendly AI assistant. Ask me anything!
-        </p>
+        <h2 class="text-3xl font-light">Hi, I'm BABI-Bot</h2>
+        <p class="text-gray-400 mt-4 text-lg">Your friendly AI assistant.<br>Ask me anything!</p>
       </div>
     `;
   }
@@ -44,15 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
   addWelcome();
 
   function scrollToBottom() {
-    setTimeout(() => {
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }, 80);
+    setTimeout(() => { messagesDiv.scrollTop = messagesDiv.scrollHeight; }, 80);
   }
 
-  // Add a message to the chat
   function addMessage(content, isUser) {
     const div = document.createElement('div');
-    div.className = `flex ${isUser ? 'justify-end' : 'justify-start'}`;
+    div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`;
     div.innerHTML = `
       <div class="message ${isUser ? 'user-message' : 'bot-message'}">
         ${content}
@@ -67,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const userMessage = input.value.trim();
     if (!userMessage) return;
 
-    // Add user message
     addMessage(userMessage, true);
 
     input.value = '';
@@ -75,47 +62,44 @@ document.addEventListener('DOMContentLoaded', () => {
     sendBtn.textContent = '…';
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",   // Fast & high quality model
+          model: "llama-3.3-70b-versatile",
           messages: [
             { role: "system", content: "You are BABI-Bot, a friendly and helpful AI assistant." },
             { role: "user", content: userMessage }
           ],
           temperature: 0.7,
-          max_tokens: 800
+          max_tokens: 1000
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Groq API Error:", res.status, errorText);
+        throw new Error(`HTTP ${res.status}`);
       }
 
-      const data = await response.json();
-      const aiReply = data.choices?.[0]?.message?.content || 
-                     "Sorry, I couldn't generate a response right now.";
+      const data = await res.json();
+      const aiReply = data.choices?.[0]?.message?.content || "I couldn't generate a reply.";
 
       addMessage(aiReply, false);
 
     } catch (err) {
-      console.error(err);
-      addMessage("⚠️ Sorry, something went wrong. Please check your API key and try again.", false);
+      console.error("Full error:", err);
+      addMessage("⚠️ Sorry, something went wrong.<br>Please check your API key and try again.", false);
     }
 
     sendBtn.disabled = false;
     sendBtn.textContent = 'Send';
-
     messageCount++;
     countEl.textContent = `${messageCount} messages`;
   });
 
-  // Extra scroll when focusing input
-  input.addEventListener('focus', () => {
-    setTimeout(scrollToBottom, 200);
-  });
+  input.addEventListener('focus', () => setTimeout(scrollToBottom, 200));
 });
