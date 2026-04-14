@@ -19,9 +19,9 @@ body {
 
 .message {
   max-width: 88%;
-  padding: 15px 18px;
+  padding: 15px 19px;
   border-radius: 22px;
-  line-height: 1.6;
+  line-height: 1.65;
   font-size: 16.5px;
   word-wrap: break-word;
 }
@@ -41,10 +41,10 @@ body {
 }
 
 .safe-area-bottom {
-  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
 
-/* Prevent Android zoom on input focus */
+/* Prevent zoom on input focus (important for Tecno) */
 input {
   font-size: 17px !important;
-}
+  }
