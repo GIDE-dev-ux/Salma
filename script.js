@@ -1,178 +1,113 @@
-const messages = document.getElementById("messages");
-const input = document.getElementById("input");
-const imageUpload = document.getElementById("imageInput");
-const msgCount = document.getElementById("msgCount");
-
-let conversationHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
-let stats = JSON.parse(localStorage.getItem("chatStats")) || { messages: 0 };
-
-msgCount.innerText = stats.messages;
-
-// Load previous messages
-conversationHistory.forEach(msg => {
-  addMessage(
-    msg.content?.[0]?.text || "[Image]",
-    msg.role === "user" ? "user" : "bot"
-  );
-});
-
-function addMessage(text, type) {
-  const div = document.createElement("div");
-  div.className = "msg " + type;
-  div.innerHTML = text.replace(/```([\s\S]*?)```/g, "<pre>$1</pre>");
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
-}
-
-// Image preview
-imageUpload.addEventListener("change", function () {
-  const file = imageUpload.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-    const div = document.createElement("div");
-    div.className = "msg user";
-
-    const img = document.createElement("img");
-    img.src = e.target.result;
-
-    div.appendChild(img);
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-  };
-
-  reader.readAsDataURL(file);
-});
-
-async function sendMessage() {
-  let text = input.value.trim();
-  const file = imageUpload.files[0];
-
-  const mode = document.getElementById("mode");
-
-  // 🔥 Mode logic
-  if (mode && mode.value === "code") {
-    text = "Write clean, working code for: " + text;
-  }
-
-  if (mode && mode.value === "debug") {
-    text = "Fix this code and explain the error: " + text;
-  }
-
-  let imageData = null;
-
-  if (file) {
-    imageData = await convertImage(file);
-  }
-
-  if (!text && !file) return;
-
-  if (text) {
-    addMessage(text, "user");
-  }
-
-  // 🔥 Combine text + image
-  let userContent = [];
-
-  if (text) {
-    userContent.push({ type: "text", text: text });
-  }
-
-  if (imageData) {
-    userContent.push({
-      type: "image_url",
-      image_url: { url: imageData }
-    });
-  }
-
-  conversationHistory.push({
-    role: "user",
-    content: userContent
-  });
-
-  input.value = "";
-
-  stats.messages++;
-  localStorage.setItem("chatStats", JSON.stringify(stats));
-  msgCount.innerText = stats.messages;
-
-  const typingDiv = document.createElement("div");
-  typingDiv.className = "msg bot";
-  typingDiv.innerText = "BABI-Bot is typing...";
-  messages.appendChild(typingDiv);
-
-  try {
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: text,
-        history: conversationHistory,
-        image: imageData
-      })
-    });
-
-    const data = await res.json();
-
-    imageUpload.value = "";
-    typingDiv.remove();
-
-    typeMessage(data.reply);
-
-    conversationHistory.push({
-      role: "assistant",
-      content: [
-        { type: "text", text: data.reply }
-      ]
-    });
-
-    localStorage.setItem("chatHistory", JSON.stringify(conversationHistory));
-
-  } catch (err) {
-    typingDiv.remove();
-    addMessage("Server error. Try again.", "bot");
-  }
-}
-
-function clearChat() {
-  localStorage.removeItem("chatHistory");
-  conversationHistory = [];
-  messages.innerHTML = "";
-}
-
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    sendMessage();
-  }
-});
-
-function convertImage(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.readAsDataURL(file);
+// ==================== BETTER MOBILE KEYBOARD HANDLING ====================
+if ('visualViewport' in window) {
+  const messagesContainer = document.getElementById('messages');
+  
+  window.visualViewport.addEventListener('resize', () => {
+    const vh = window.visualViewport.height;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    
+    // Auto-scroll to bottom when keyboard opens/closes
+    setTimeout(() => {
+      messagesContainer.scrollTo({
+        top: messagesContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    }, 100);
   });
 }
 
-function typeMessage(text) {
-  const div = document.createElement("div");
-  div.className = "msg bot";
-  messages.appendChild(div);
+// Main Chat Logic
+document.addEventListener('DOMContentLoaded', () => {
+  const messagesDiv = document.getElementById('messages');
+  const form = document.getElementById('chat-form');
+  const input = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
+  const countEl = document.getElementById('message-count');
 
-  let i = 0;
+  let messageCount = 0;
 
-  const interval = setInterval(() => {
-    div.textContent += text.charAt(i);
-    i++;
+  // Welcome Message (Centered & Beautiful)
+  function addWelcome() {
+    messagesDiv.innerHTML = `
+      <div class="h-full flex flex-col items-center justify-center text-center px-6 py-12">
+        <div class="text-7xl mb-6">❤️</div>
+        <h2 class="text-3xl font-light text-white">Hi, I'm BABI-Bot</h2>
+        <p class="text-gray-400 mt-4 text-lg max-w-[280px]">
+          Your friendly AI assistant. Ask me anything!
+        </p>
+      </div>
+    `;
+  }
 
-    messages.scrollTop = messages.scrollHeight;
+  addWelcome();
 
-    if (i >= text.length) {
-      clearInterval(interval);
+  // Scroll helper
+  function scrollToBottom() {
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 50);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const userMessage = input.value.trim();
+    if (!userMessage) return;
+
+    // Add user message
+    messagesDiv.innerHTML += `
+      <div class="flex justify-end">
+        <div class="message user-message">
+          ${userMessage}
+        </div>
+      </div>
+    `;
+    scrollToBottom();
+
+    input.value = '';
+    sendBtn.disabled = true;
+    sendBtn.textContent = '…';
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: userMessage }] })
+      });
+
+      if (!response.ok) throw new Error('Failed to get response');
+
+      const data = await response.json();
+      const aiReply = data.reply || "Sorry, I couldn't generate a response right now.";
+
+      // Add bot message
+      messagesDiv.innerHTML += `
+        <div class="flex justify-start">
+          <div class="message bot-message">
+            ${aiReply}
+          </div>
+        </div>
+      `;
+
+    } catch (err) {
+      messagesDiv.innerHTML += `
+        <div class="flex justify-start">
+          <div class="message bot-message bg-red-950 text-red-200">
+            ⚠️ Sorry, something went wrong. Please try again.
+          </div>
+        </div>
+      `;
     }
-  }, 20);
-}
+
+    scrollToBottom();
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send';
+
+    messageCount++;
+    countEl.textContent = `${messageCount} messages`;
+  });
+
+  // Extra scroll when input is focused
+  input.addEventListener('focus', () => {
+    setTimeout(scrollToBottom, 200);
+  });
+});
