@@ -1,69 +1,49 @@
+// api/chat.js
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-if (req.method !== "POST") {
-  return res.status(405).json({ reply: "Method not allowed" });
-}
-
-const { message, history = [], image } = req.body;
-const apiKey = process.env.GROQ_API_KEY;
-
-let content = [];
-
-if (message) {
-  content.push({
-    type: "text",
-    text: message
-  });
-}
-
-if (image) {
-  content.push({
-    type: "image_url",
-    image_url: {
-      url: image
-    }
-  });
-}
-
-try {
-
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${apiKey}`
-  },
-  body: JSON.stringify({
-    model: "llama-3.1-8b-instant",
-    messages: [
-  {
-    role: "system",
-    content: "You are BABI-Bot, a powerful coding assistant. Help the user write, debug, and understand code. Always give clear explanations. If the user asks for code, provide clean and complete examples."
-  },
-  ...history,
-  { role: "user", content: content }
-]
-  })
-});
-
-  const data = await response.json();
-
-  if (data.error) {
-    return res.status(500).json({
-      reply: "AI Error: " + data.error.message
-    });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
-  res.status(200).json({
-    reply: data?.choices?.[0]?.message?.content || "No response from AI"
-  });
+  try {
+    const { messages } = req.body;
 
-} catch (error) {
+    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { 
+            role: "system", 
+            content: "You are BABI-Bot, a friendly and helpful AI assistant. Add light Naija flavor when it fits naturally." 
+          },
+          ...messages
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
+      })
+    });
 
-  res.status(500).json({
-    reply: "Server error while contacting AI."
-  });
+    if (!groqResponse.ok) {
+      throw new Error('Groq API returned error');
+    }
 
-}
+    const data = await groqResponse.json();
+    const aiReply = data.choices?.[0]?.message?.content || "Sorry, I couldn't generate a response.";
 
-}
+    res.status(200).json({ reply: aiReply });
+
+  } catch (error) {
+    console.error('API Error:', error);
+    res.status(500).json({ 
+      reply: "⚠️ Sorry, something went wrong. Please try again." 
+    });
+  }
+        }
