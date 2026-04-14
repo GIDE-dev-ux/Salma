@@ -10,21 +10,21 @@
 <body class="bg-[#0a0a0a] text-white h-screen w-screen overflow-hidden flex flex-col">
 
   <!-- Header -->
-  <div class="h-14 bg-[#1a1a1a] flex items-center px-5 flex-shrink-0 z-10 border-b border-gray-800">
+  <div class="h-12 bg-[#1a1a1a] flex items-center px-4 flex-shrink-0 z-10 border-b border-gray-800">
     <div class="flex-1">
-      <h1 class="font-semibold text-xl">My Chatbot</h1>
-      <p class="text-sm text-gray-400 -mt-1">Ask me anything</p>
+      <h1 class="font-semibold text-lg">My Chatbot</h1>
+      <p class="text-xs text-gray-400 -mt-1">Ask me anything</p>
     </div>
-    <div class="text-sm font-medium">BABI-Bot</div>
+    <div class="text-xs font-medium">BABI-Bot</div>
   </div>
 
   <!-- Messages Area -->
-  <div id="messages" class="flex-1 overflow-y-auto p-10 space-y-10 bg-[#0a0a0a] scroll-smooth pb-52">
+  <div id="messages" class="flex-1 overflow-y-auto p-10 space-y-8 bg-[#0a0a0a] scroll-smooth pb-48">
     <!-- Welcome message added by JS -->
   </div>
 
   <!-- Input Area -->
-  <div class="bg-[#111] border-t border-gray-800 p-5 flex-shrink-0 safe-area-bottom">
+  <div class="bg-[#111] border-t border-gray-800 p-4 flex-shrink-0 safe-area-bottom">
     <form id="chat-form" class="flex gap-3 items-center">
       <input 
         id="user-input"
@@ -33,13 +33,13 @@
         autocomplete="off"
         autocorrect="off"
         spellcheck="false"
-        class="flex-1 bg-[#1f1f1f] border border-gray-700 focus:border-orange-500 rounded-full px-6 py-5 text-base text-white placeholder-gray-400 focus:outline-none"
+        class="flex-1 bg-[#1f1f1f] border border-gray-700 focus:border-orange-500 rounded-full px-5 py-4 text-sm text-white placeholder-gray-400 focus:outline-none"
         placeholder="Message BABI-Bot..."
       >
       <button 
         type="submit"
         id="send-btn"
-        class="bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 px-9 py-4 rounded-full font-medium active:scale-95 min-w-[78px]"
+        class="bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 px-7 py-3 rounded-full font-medium active:scale-95 text-sm min-w-[70px]"
       >
         Send
       </button>
@@ -48,4 +48,4 @@
 
   <script src="script.js"></script>
 </body>
-  </html>
+</html>
