@@ -14,15 +14,15 @@ body {
 
 #messages {
   scrollbar-width: thin;
-  scrollbar-color: #666 #0a0a0a;
+  scrollbar-color: #555 #0a0a0a;
 }
 
 .message {
-  max-width: 88%;
-  padding: 15px 19px;
-  border-radius: 22px;
-  line-height: 1.65;
-  font-size: 16.5px;
+  max-width: 85%;
+  padding: 14px 18px;
+  border-radius: 20px;
+  line-height: 1.6;
+  font-size: 16px;
   word-wrap: break-word;
 }
 
@@ -30,21 +30,43 @@ body {
   background: linear-gradient(135deg, #f97316, #ec4899);
   color: white;
   margin-left: auto;
-  border-bottom-right-radius: 8px;
+  border-bottom-right-radius: 6px;
 }
 
 .bot-message {
   background: #1f1f1f;
   color: #e5e5e5;
   margin-right: auto;
-  border-bottom-left-radius: 8px;
+  border-bottom-left-radius: 6px;
+}
+
+/* Welcome screen styling */
+#messages > div:first-child {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+#messages h2 {
+  font-size: 28px;
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+#messages p {
+  font-size: 17px;
+  color: #9ca3af;
+  max-width: 280px;
 }
 
 .safe-area-bottom {
-  padding-bottom: max(24px, env(safe-area-inset-bottom));
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 
-/* Prevent zoom on input focus (important for Tecno) */
 input {
   font-size: 17px !important;
-  }
+}
