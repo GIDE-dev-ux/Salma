@@ -9,23 +9,29 @@
 </head>
 <body class="bg-[#0a0a0a] text-white h-screen w-screen overflow-hidden flex flex-col">
 
-  <!-- Header -->
-  <div class="h-14 bg-gradient-to-r from-amber-600 to-yellow-600 flex items-center px-5 flex-shrink-0 z-10">
-    <div>
+  <!-- Black Header like your screenshot -->
+  <div class="h-14 bg-[#1a1a1a] border-b border-gray-800 flex items-center px-5 flex-shrink-0 z-10">
+    <div class="flex-1">
       <h1 class="font-semibold text-xl">My Chatbot</h1>
-      <p class="text-sm text-white/90 -mt-1">Ask me anything</p>
+      <p class="text-sm text-gray-400 -mt-1">Ask me anything</p>
     </div>
-    <div class="ml-auto text-sm font-medium">BABI-Bot</div>
+    <div class="text-sm font-medium text-white">BABI-Bot</div>
   </div>
 
-  <!-- Messages Area - Zoomed out with more space -->
-  <div id="messages" class="flex-1 overflow-y-auto p-8 space-y-10 bg-[#0a0a0a] scroll-smooth pb-36">
+  <!-- Messages Area -->
+  <div id="messages" class="flex-1 overflow-y-auto p-6 space-y-8 bg-[#0a0a0a] scroll-smooth pb-32">
     <!-- Welcome message added by JS -->
   </div>
 
-  <!-- Input Area -->
-  <div class="bg-[#111] border-t border-gray-800 p-4 flex-shrink-0 safe-area-bottom">
-    <form id="chat-form" class="flex gap-3">
+  <!-- Modern Input Area like your screenshot -->
+  <div class="bg-[#111] p-4 flex-shrink-0 safe-area-bottom">
+    <form id="chat-form" class="flex gap-3 items-center">
+      <!-- Attachment button -->
+      <button type="button" class="w-11 h-11 bg-gradient-to-br from-pink-500 to-orange-500 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+        📎
+      </button>
+
+      <!-- Input field -->
       <input 
         id="user-input"
         type="text"
@@ -33,13 +39,15 @@
         autocomplete="off"
         autocorrect="off"
         spellcheck="false"
-        class="flex-1 bg-[#1f1f1f] border border-gray-700 focus:border-orange-500 rounded-full px-6 py-4 text-base text-white placeholder-gray-400 focus:outline-none"
-        placeholder="Message BABI-Bot..."
+        class="flex-1 bg-[#1f1f1f] border border-gray-700 focus:border-orange-500 rounded-full px-6 py-4 text-[16.5px] text-white placeholder-gray-400 focus:outline-none"
+        placeholder="Type a message... or tap the paperclip"
       >
+
+      <!-- Send button -->
       <button 
         type="submit"
         id="send-btn"
-        class="bg-gradient-to-r from-orange-500 to-pink-600 px-8 rounded-full font-medium active:scale-95"
+        class="bg-gradient-to-r from-pink-500 to-orange-500 px-8 py-3.5 rounded-full font-medium active:scale-95 transition-all"
       >
         Send
       </button>
@@ -48,4 +56,4 @@
 
   <script src="script.js"></script>
 </body>
-</html>
+  </html>
