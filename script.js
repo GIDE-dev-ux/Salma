@@ -1,9 +1,17 @@
 // ==================== BETTER MOBILE KEYBOARD HANDLING ====================
 if ('visualViewport' in window) {
   const messagesContainer = document.getElementById('messages');
+  
   window.visualViewport.addEventListener('resize', () => {
-    document.documentElement.style.setProperty('--vh', `${window.visualViewport.height}px`);
-    setTimeout(() => messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' }), 100);
+    const vh = window.visualViewport.height;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    
+    setTimeout(() => {
+      messagesContainer.scrollTo({
+        top: messagesContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    }, 100);
   });
 }
 
@@ -17,16 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let messageCount = 0;
 
-  // ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
-  const GROQ_API_KEY = "gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; 
-  // REPLACE WITH YOUR REAL GROQ KEY FROM https://console.groq.com/keys
-  // ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
-
   function addWelcome() {
     messagesDiv.innerHTML = `
       <div class="h-full flex flex-col items-center justify-center text-center px-6 py-12">
         <div class="text-7xl mb-6">❤️</div>
-        <h2 class="text-3xl font-light">Hi, I'm BABI-Bot</h2>
+        <h2 class="text-3xl font-light text-white">Hi, I'm BABI-Bot</h2>
         <p class="text-gray-400 mt-4 text-lg">Your friendly AI assistant.<br>Ask me anything!</p>
       </div>
     `;
@@ -35,7 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
   addWelcome();
 
   function scrollToBottom() {
-    setTimeout(() => { messagesDiv.scrollTop = messagesDiv.scrollHeight; }, 80);
+    setTimeout(() => {
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 80);
   }
 
   function addMessage(content, isUser) {
@@ -62,44 +67,37 @@ document.addEventListener('DOMContentLoaded', () => {
     sendBtn.textContent = '…';
 
     try {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      // FIXED: Call your own Vercel API instead of Groq directly
+      const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GROQ_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            { role: "system", content: "You are BABI-Bot, a friendly and helpful AI assistant." },
-            { role: "user", content: userMessage }
-          ],
-          temperature: 0.7,
-          max_tokens: 1000
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          messages: [{ role: 'user', content: userMessage }] 
         })
       });
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Groq API Error:", res.status, errorText);
-        throw new Error(`HTTP ${res.status}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      const data = await res.json();
-      const aiReply = data.choices?.[0]?.message?.content || "I couldn't generate a reply.";
+      const data = await response.json();
+      const aiReply = data.reply || "Sorry, I couldn't generate a response right now.";
 
       addMessage(aiReply, false);
 
     } catch (err) {
-      console.error("Full error:", err);
-      addMessage("⚠️ Sorry, something went wrong.<br>Please check your API key and try again.", false);
+      console.error('Chat error:', err);
+      addMessage("⚠️ Sorry, something went wrong. Please try again.", false);
     }
 
     sendBtn.disabled = false;
     sendBtn.textContent = 'Send';
+
     messageCount++;
     countEl.textContent = `${messageCount} messages`;
   });
 
-  input.addEventListener('focus', () => setTimeout(scrollToBottom, 200));
+  input.addEventListener('focus', () => {
+    setTimeout(scrollToBottom, 200);
+  });
 });
