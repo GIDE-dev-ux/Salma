@@ -12,9 +12,10 @@ body {
   overflow: hidden;
 }
 
+/* Make content smaller and more zoomed out */
 #messages {
-  scrollbar-width: thin;
-  scrollbar-color: #555 #0a0a0a;
+  padding: 32px 24px;   /* Increased side and top padding */
+  font-size: 15.5px;
 }
 
 .message {
@@ -22,25 +23,9 @@ body {
   padding: 14px 18px;
   border-radius: 20px;
   line-height: 1.6;
-  font-size: 16px;
-  word-wrap: break-word;
 }
 
-.user-message {
-  background: linear-gradient(135deg, #f97316, #ec4899);
-  color: white;
-  margin-left: auto;
-  border-bottom-right-radius: 6px;
-}
-
-.bot-message {
-  background: #1f1f1f;
-  color: #e5e5e5;
-  margin-right: auto;
-  border-bottom-left-radius: 6px;
-}
-
-/* Welcome screen styling */
+/* Welcome screen - more centered and spaced */
 #messages > div:first-child {
   height: 100%;
   display: flex;
@@ -48,25 +33,21 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 40px 20px;
+  padding-bottom: 80px;
 }
 
 #messages h2 {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 400;
-  margin-bottom: 12px;
 }
 
 #messages p {
-  font-size: 17px;
+  font-size: 16px;
   color: #9ca3af;
-  max-width: 280px;
+  margin-top: 12px;
 }
 
-.safe-area-bottom {
-  padding-bottom: max(20px, env(safe-area-inset-bottom));
-}
-
+/* Input styling */
 input {
-  font-size: 17px !important;
+  font-size: 16px !important;   /* Prevents unwanted zoom on Android */
 }
