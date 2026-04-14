@@ -12,36 +12,18 @@ body {
   overflow: hidden;
 }
 
-/* Dynamic viewport for keyboard */
-:root {
-  --vh: 100dvh;
-}
-body {
-  height: var(--vh);
-}
-
 #messages {
   scrollbar-width: thin;
-  scrollbar-color: #555 transparent;
+  scrollbar-color: #555 #0a0a0a;
 }
 
-#messages::-webkit-scrollbar {
-  width: 4px;
-}
-#messages::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 20px;
-}
-
-/* Message bubbles */
 .message {
-  max-width: 85%;
-  padding: 13px 17px;
-  border-radius: 20px;
-  line-height: 1.5;
-  font-size: 15.5px;
+  max-width: 88%;
+  padding: 14px 18px;
+  border-radius: 22px;
+  line-height: 1.55;
+  font-size: 16px;
   word-wrap: break-word;
-  animation: fadeIn 0.3s ease;
 }
 
 .user-message {
@@ -58,15 +40,11 @@ body {
   border-bottom-left-radius: 6px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .safe-area-bottom {
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
 
-input:focus {
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
-        }
+/* Bigger input on small screens */
+input {
+  font-size: 16px !important; /* Prevents zoom on focus on Android */
+}
