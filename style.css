@@ -12,10 +12,9 @@ body {
   overflow: hidden;
 }
 
-/* Make content smaller and more zoomed out */
 #messages {
-  padding: 32px 24px;   /* Increased side and top padding */
-  font-size: 15.5px;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #0a0a0a;
 }
 
 .message {
@@ -23,9 +22,22 @@ body {
   padding: 14px 18px;
   border-radius: 20px;
   line-height: 1.6;
+  font-size: 16px;
 }
 
-/* Welcome screen - more centered and spaced */
+.user-message {
+  background: linear-gradient(135deg, #f97316, #ec4899);
+  color: white;
+  margin-left: auto;
+}
+
+.bot-message {
+  background: #1f1f1f;
+  color: #e5e5e5;
+  margin-right: auto;
+}
+
+/* Welcome screen spacing */
 #messages > div:first-child {
   height: 100%;
   display: flex;
@@ -33,11 +45,11 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding-bottom: 80px;
+  padding: 40px 20px;
 }
 
 #messages h2 {
-  font-size: 26px;
+  font-size: 27px;
   font-weight: 400;
 }
 
@@ -47,7 +59,6 @@ body {
   margin-top: 12px;
 }
 
-/* Input styling */
 input {
-  font-size: 16px !important;   /* Prevents unwanted zoom on Android */
+  font-size: 16.5px !important;
 }
