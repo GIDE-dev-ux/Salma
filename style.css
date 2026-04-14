@@ -12,32 +12,38 @@ body {
   overflow: hidden;
 }
 
+/* Messages Area */
 #messages {
   scrollbar-width: thin;
   scrollbar-color: #555 #0a0a0a;
+  padding: 32px 24px;
 }
 
+/* Message bubbles */
 .message {
   max-width: 85%;
   padding: 14px 18px;
   border-radius: 20px;
-  line-height: 1.6;
+  line-height: 1.65;
   font-size: 16px;
+  word-wrap: break-word;
 }
 
 .user-message {
   background: linear-gradient(135deg, #f97316, #ec4899);
   color: white;
   margin-left: auto;
+  border-bottom-right-radius: 8px;
 }
 
 .bot-message {
   background: #1f1f1f;
   color: #e5e5e5;
   margin-right: auto;
+  border-bottom-left-radius: 8px;
 }
 
-/* Welcome screen spacing */
+/* Welcome screen - more space */
 #messages > div:first-child {
   height: 100%;
   display: flex;
@@ -45,7 +51,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 40px 20px;
+  padding: 40px 20px 160px;   /* Increased for better spacing */
 }
 
 #messages h2 {
@@ -59,6 +65,12 @@ body {
   margin-top: 12px;
 }
 
+/* Safe area + keyboard fix */
+.safe-area-bottom {
+  padding-bottom: max(40px, env(safe-area-inset-bottom));   /* Important fix */
+}
+
+/* Prevent zoom on input */
 input {
   font-size: 16.5px !important;
 }
