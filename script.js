@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let messageCount = 0;
 
-  // Updated Smaller Welcome Message
+  // Smaller Welcome Message (matches your current smaller design)
   function addWelcome() {
     messagesDiv.innerHTML = `
       <div>
-        <div class="heart text-7xl mb-8">❤️</div>
-        <h2 class="text-2xl font-light">Hi, I'm BABI-Bot</h2>
-        <p class="text-gray-400 mt-3 text-base">Your friendly AI assistant.<br>Ask me anything!</p>
+        <div class="heart">❤️</div>
+        <h2>Hi, I'm BABI-Bot</h2>
+        <p>Your friendly AI assistant.<br>Ask me anything!</p>
       </div>
     `;
   }
