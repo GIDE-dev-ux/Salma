@@ -12,19 +12,19 @@ body {
   overflow: hidden;
 }
 
-/* Messages Area - Zoomed out */
+/* Messages Area */
 #messages {
   scrollbar-width: thin;
   scrollbar-color: #555 #0a0a0a;
-  padding: 40px 24px;   /* More padding = more zoom out */
+  padding: 40px 24px;   /* More space = more zoomed out */
 }
 
-/* Smaller message bubbles */
+/* Message bubbles */
 .message {
   max-width: 85%;
   padding: 12px 16px;
   border-radius: 18px;
-  line-height: 1.55;
+  line-height: 1.6;
   font-size: 15px;
 }
 
@@ -48,16 +48,16 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 20px 180px;   /* More bottom space */
+  padding: 60px 20px 180px;
 }
 
 #messages .heart {
-  font-size: 56px;   /* Even smaller heart */
+  font-size: 58px;
   margin-bottom: 28px;
 }
 
 #messages h2 {
-  font-size: 21px;
+  font-size: 22px;
 }
 
 #messages p {
@@ -67,10 +67,9 @@ body {
 
 /* Keyboard fix */
 .safe-area-bottom {
-  padding-bottom: max(40px, env(safe-area-inset-bottom));
+  padding-bottom: max(36px, env(safe-area-inset-bottom));
 }
 
-/* Prevent zoom */
 input {
   font-size: 15.5px !important;
 }
