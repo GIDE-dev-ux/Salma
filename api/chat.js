@@ -1,10 +1,14 @@
 export const config = {
-  maxDuration: 60,
+  maxDuration: 30 // safer for non-streaming
 };
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  if (!process.env.GROQ_API_KEY) {
+    return res.status(500).json({ error: "Missing GROQ_API_KEY" });
   }
 
   try {
@@ -14,82 +18,64 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid messages format" });
     }
 
-    // ✅ Call Groq API
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            {
-              role: "system",
-              content: `You are BABI-Bot, a professional AI assistant.
+    // ✅ Timeout protection
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
+
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content: `You are BABI-Bot, a professional AI assistant.
 Expert in cybersecurity and programming.
-Give clear answers step-by-step.`,
-            },
-            ...messages,
-          ],
-          temperature: 0.7,
-          max_tokens: 800,
-          stream: true,
-        }),
-      }
-    );
-
-    if (!response.ok || !response.body) {
-      const text = await response.text();
-      console.error("Groq error:", text);
-      return res.status(500).json({ error: "Groq API failed" });
-    }
-
-    // ✅ IMPORTANT HEADERS (FIXES YOUR BUG)
-    res.writeHead(200, {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-      "Connection": "keep-alive",
-      "Transfer-Encoding": "chunked",
+Be clear, concise, and helpful.`
+          },
+          ...messages
+        ],
+        temperature: 0.7,
+        max_completion_tokens: 800 // ✅ updated param
+      })
     });
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
+    clearTimeout(timeout);
 
-    let buffer = "";
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-
-      const lines = buffer.split("\n");
-      buffer = lines.pop();
-
-      for (const line of lines) {
-        if (!line.trim()) continue;
-
-        // ✅ Forward ONLY valid SSE lines
-        if (line.startsWith("data:")) {
-          res.write(line + "\n\n");
-        }
-      }
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      return res.status(500).json({ error: "Invalid JSON from Groq" });
     }
 
-    // ✅ End stream properly
-    res.write("data: [DONE]\n\n");
-    res.end();
-
-  } catch (error) {
-    console.error("Server error:", error);
-
-    if (!res.headersSent) {
-      res.status(500).json({ error: "Internal server error" });
-    } else {
-      res.end();
+    if (!response.ok) {
+      console.error("Groq error:", data);
+      return res.status(500).json({
+        error: data?.error?.message || "Groq API failed"
+      });
     }
+
+    const reply = data?.choices?.[0]?.message?.content;
+
+    if (!reply) {
+      return res.status(500).json({ error: "Empty response from model" });
+    }
+
+    return res.status(200).json({ reply });
+
+  } catch (err) {
+    console.error("Server error:", err);
+
+    if (err.name === "AbortError") {
+      return res.status(504).json({ error: "Request timeout" });
+    }
+
+    return res.status(500).json({ error: "Internal server error" });
   }
-              }
+                                 }
