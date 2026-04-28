@@ -25,9 +25,12 @@ html, body {
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
   background: #000;
-  height: 100dvh; /* ✅ FIXED MOBILE HEIGHT */
-  display: flex;
   color: var(--text-main);
+
+  height: 100dvh;
+  display: flex;
+
+  overflow-x: hidden;
 }
 
 /* ================= APP ================= */
@@ -35,7 +38,7 @@ body {
   display: flex;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* ✅ prevents layout overflow */
+  overflow: hidden;
 }
 
 /* ================= SIDEBAR ================= */
@@ -90,6 +93,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 /* ================= HEADER ================= */
@@ -109,18 +113,22 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0; /* ✅ IMPORTANT */
+  min-height: 0;
 }
 
 /* ================= MESSAGES ================= */
 .messages {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px;
+
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-height: 0; /* ✅ IMPORTANT */
+
+  min-height: 0;
+  scroll-behavior: smooth;
 }
 
 /* ================= MESSAGE ================= */
@@ -129,6 +137,18 @@ body {
   padding: 14px;
   border-radius: 16px;
   line-height: 1.5;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* prevent media/code overflow */
+.message img,
+.message pre,
+.message code {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
 }
 
 .user {
@@ -150,23 +170,31 @@ body {
   background: var(--bg-secondary);
   border-top: 1px solid var(--border);
 
-  position: sticky; /* ✅ keeps visible */
+  position: sticky;
   bottom: 0;
+}
+
+/* 🔥 CRITICAL FIX (DO NOT REMOVE) */
+input, textarea, select, button {
+  font-size: max(16px, 1em);
 }
 
 /* INPUT FIELD */
 input {
   flex: 1;
+  min-width: 0;
+
   padding: 12px;
   border-radius: 999px;
   border: 1px solid #333;
   background: #1a1a1a;
   color: white;
+
+  outline: none;
 }
 
 input:focus {
   border-color: var(--primary);
-  outline: none;
 }
 
 /* SEND BUTTON */
@@ -176,6 +204,8 @@ button {
   border: none;
   background: linear-gradient(45deg, var(--primary), var(--secondary));
   cursor: pointer;
+
+  touch-action: manipulation;
 }
 
 /* ================= SCROLL ================= */
