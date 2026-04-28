@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BABI-Bot</title>
 
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.png" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js/styles/github-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js/lib/highlight.min.js"></script>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar">
+      <h3>Chats</h3>
+      <button id="newChatBtn">+ New Chat</button>
+
+      <div id="chatList"></div>
+    </div>
+
+    <!-- ================= MAIN ================= -->
+    <div class="main">
+
+      <!-- HEADER -->
+      <div class="header">
+        <img src="/favicon.png" class="logo" />
+        <h2>BABI-Bot</h2>
+      </div>
+
+      <!-- CHAT -->
+      <div class="chat-container">
+
+        <!-- MESSAGES -->
+        <div class="messages" id="chatContainer"></div>
+
+        <!-- IMAGE PREVIEW -->
+        <div id="imagePreview"></div>
+
+        <!-- INPUT -->
+        <div class="input-area">
+
+          <!-- Upload -->
+          <label for="imageUpload" class="upload-btn">📎</label>
+          <input type="file" id="imageUpload" multiple hidden />
+
+          <!-- Text -->
+          <input
+            type="text"
+            id="userInput"
+            placeholder="Ask anything..."
+            autocomplete="off"
+          />
+
+          <!-- Send -->
+          <button id="sendBtn">➤</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- SCRIPT -->
+  <script src="script.js"></script>
+
+</body>
+  </html>
