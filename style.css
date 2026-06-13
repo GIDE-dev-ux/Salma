@@ -60,6 +60,23 @@ body {
   cursor: pointer;
   margin-bottom: 10px;
 }
+#searchChats {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+
+  background: #1a1a1a;
+  color: white;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  outline: none;
+}
+
+#searchChats::placeholder {
+  color: #777;
+}
 
 #chatList {
   flex: 1;
@@ -218,10 +235,6 @@ button {
 }
 
 /* ================= MOBILE ================= */
-@media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
 
   .message {
     max-width: 90%;
