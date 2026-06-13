@@ -79,7 +79,7 @@ body {
 }
 
 #chatList {
-  flex: 1;
+  margin-top: 10px;
   overflow-y: auto;
 }
 
@@ -239,4 +239,4 @@ button {
   .message {
     max-width: 90%;
   }
-  }
+}
