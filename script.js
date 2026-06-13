@@ -1,16 +1,11 @@
 // ===================== STATE =====================
-let chats = JSON.parse(localStorage.getItem("chats")) || {};
-let currentChatId = localStorage.getItem("currentChatId") || null;
-let searchQuery = "";
+let chats = {};
+let currentChatId = null;
 
 // ===================== ELEMENTS =====================
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chatContainer');
-const newChatBtn = document.getElementById('newChatBtn');
-const clearChatBtn = document.getElementById('clearChatBtn');
-const searchChats = document.getElementById('searchChats')
-const chatList = document.getElementById('chatList');
 
 // ===================== UTILS =====================
 function scrollToBottom() {
@@ -21,8 +16,6 @@ function saveChats() {
   localStorage.setItem("chats", JSON.stringify(chats));
   localStorage.setItem("currentChatId", currentChatId);
 }
-function renderChatList() {
-  if (!chatList) return;
 
   chatList.innerHTML = "";
 
@@ -153,14 +146,8 @@ userInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') sendMessage();
 });
 
-newChatBtn.addEventListener('click', createNewChat);
 clearChatBtn.addEventListener('click', clearCurrentChat);
-if (searchChats) {
-  searchChats.addEventListener("input", (e) => {
-    searchQuery = e.target.value;
-    renderChatList();
-  });
-}
+
 
 // ===================== INIT =====================
 if (!currentChatId || !chats[currentChatId]) {
@@ -168,5 +155,3 @@ if (!currentChatId || !chats[currentChatId]) {
 } else {
   loadChat(currentChatId);
 }
-
-renderChatList();
