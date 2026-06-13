@@ -8,6 +8,8 @@ const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chatContainer');
 const newChatBtn = document.getElementById('newChatBtn');
 const clearChatBtn = document.getElementById('clearChatBtn');
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.querySelector(".sidebar");
 
 // ===================== UTILS =====================
 function scrollToBottom() {
@@ -17,6 +19,34 @@ function scrollToBottom() {
 function saveChats() {
   localStorage.setItem("chats", JSON.stringify(chats));
   localStorage.setItem("currentChatId", currentChatId);
+}
+
+function renderChatList() {
+  const chatList = document.getElementById("chatList");
+
+  chatList.innerHTML = "";
+
+  Object.keys(chats)
+    .reverse()
+    .forEach(id => {
+      const item = document.createElement("div");
+
+      item.className =
+        `chat-item ${id === currentChatId ? "active" : ""}`;
+
+      item.textContent = `Chat ${id.slice(-4)}`;
+
+      item.onclick = () => {
+        loadChat(id);
+        renderChatList();
+
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove("open");
+        }
+      };
+
+      chatList.appendChild(item);
+    });
 }
 
 // ===================== CHAT SYSTEM =====================
@@ -142,6 +172,9 @@ if (!currentChatId || !chats[currentChatId]) {
 } else {
   loadChat(currentChatId);
 }
+menuBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("open");
+});
 
 renderChatList();
 if ("serviceWorker" in navigator) {
@@ -153,4 +186,4 @@ if ("serviceWorker" in navigator) {
       console.error("SW registration failed:", err);
     }
   });
-    }
+}
