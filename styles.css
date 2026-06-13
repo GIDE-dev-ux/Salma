@@ -1,232 +1,189 @@
-/* ================= ROOT ================= */
-:root {
-  --bg-main: #0a0a0a;
-  --bg-secondary: #111;
-  --bg-sidebar: #0f0f0f;
-  --bg-bot: #1e1e1e;
-  --primary: #ff0080;
-  --secondary: #ff8c00;
-  --text-main: #ffffff;
-  --border: #2a2a2a;
+// ===================== STATE =====================
+let chats = JSON.parse(localStorage.getItem("chats")) || {};
+let currentChatId = localStorage.getItem("currentChatId") || null;
+
+// ===================== ELEMENTS =====================
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const chatContainer = document.getElementById('chatContainer');
+const newChatBtn = document.getElementById('newChatBtn');
+const clearChatBtn = document.getElementById('clearChatBtn');
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.querySelector(".sidebar");
+
+// ===================== UTILS =====================
+function scrollToBottom() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-/* ================= RESET ================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+function saveChats() {
+  localStorage.setItem("chats", JSON.stringify(chats));
+  localStorage.setItem("currentChatId", currentChatId);
 }
 
-/* ================= BODY ================= */
-html, body {
-  height: 100%;
+function renderChatList() {
+  const chatList = document.getElementById("chatList");
+
+  chatList.innerHTML = "";
+
+  Object.keys(chats)
+    .reverse()
+    .forEach(id => {
+      const item = document.createElement("div");
+
+      item.className =
+        `chat-item ${id === currentChatId ? "active" : ""}`;
+
+      item.textContent = `Chat ${id.slice(-4)}`;
+
+      item.onclick = () => {
+        loadChat(id);
+        renderChatList();
+
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove("open");
+        }
+      };
+
+      chatList.appendChild(item);
+    });
 }
 
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #000;
-  color: var(--text-main);
+// ===================== CHAT SYSTEM =====================
+function createNewChat() {
+  const id = Date.now().toString();
+  chats[id] = [];
+  currentChatId = id;
 
-  height: 100dvh;
-  display: flex;
-
-  overflow-x: hidden;
+  saveChats();
+  loadChat(id);
+  renderChatList();
 }
 
-/* ================= APP ================= */
-.app {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
+function loadChat(id) {
+  currentChatId = id;
+  chatContainer.innerHTML = '';
 
-/* ================= SIDEBAR ================= */
-.sidebar {
-  width: 260px;
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-}
+  const chat = chats[id] || [];
 
-#newChatBtn {
-  padding: 10px;
-  border-radius: 10px;
-  background: #222;
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
-#chatList {
-  flex: 1;
-  overflow-y: auto;
-}
-
-/* ================= CHAT ITEM ================= */
-.chat-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  background: #1a1a1a;
-}
-
-.chat-item.active {
-  background: #333;
-}
-
-.delete-btn {
-  background: none;
-  border: none;
-  color: #aaa;
-  cursor: pointer;
-}
-
-/* ================= MAIN ================= */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-/* ================= HEADER ================= */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  width: 50px;
-  border-radius: 50%;
-}
-
-/* ================= CHAT ================= */
-.chat-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-/* ================= MESSAGES ================= */
-.messages {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 16px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  min-height: 0;
-  scroll-behavior: smooth;
-}
-
-/* ================= MESSAGE ================= */
-.message {
-  max-width: 80%;
-  padding: 14px;
-  border-radius: 16px;
-  line-height: 1.5;
-
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-/* prevent media/code overflow */
-.message img,
-.message pre,
-.message code {
-  max-width: 100%;
-  overflow-x: auto;
-  display: block;
-}
-
-.user {
-  align-self: flex-end;
-  background: linear-gradient(45deg, var(--primary), var(--secondary));
-}
-
-.assistant {
-  align-self: flex-start;
-  background: var(--bg-bot);
-}
-
-/* ================= INPUT ================= */
-.input-area {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px;
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border);
-
-  position: sticky;
-  bottom: 0;
-}
-
-/* 🔥 CRITICAL FIX (DO NOT REMOVE) */
-input, textarea, select, button {
-  font-size: max(16px, 1em);
-}
-
-/* INPUT FIELD */
-input {
-  flex: 1;
-  min-width: 0;
-
-  padding: 12px;
-  border-radius: 999px;
-  border: 1px solid #333;
-  background: #1a1a1a;
-  color: white;
-
-  outline: none;
-}
-
-input:focus {
-  border-color: var(--primary);
-}
-
-/* SEND BUTTON */
-button {
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: none;
-  background: linear-gradient(45deg, var(--primary), var(--secondary));
-  cursor: pointer;
-
-  touch-action: manipulation;
-}
-
-/* ================= SCROLL ================= */
-.messages::-webkit-scrollbar {
-  width: 5px;
-}
-
-.messages::-webkit-scrollbar-thumb {
-  background: #444;
-}
-
-/* ================= MOBILE ================= */
-@media (max-width: 768px) {
-  .sidebar {
-    display: flex;
+  if (chat.length === 0) {
+    addMessage('assistant', "👋 Hi, I'm BABI-Bot.\nAsk me anything!");
+  } else {
+    chat.forEach(msg => {
+      addMessage(msg.role, msg.content);
+    });
   }
 
-  .message {
-    max-width: 90%;
+  saveChats();
+  renderChatList(); // ADD THIS
+}
+
+// ===================== CLEAR CHAT =====================
+function clearCurrentChat() {
+  if (!currentChatId) return;
+
+  const confirmClear = confirm("Start a new conversation?");
+  if (!confirmClear) return;
+
+  chats[currentChatId] = []; // clear messages
+  saveChats();
+  loadChat(currentChatId); // reload empty chat
+}
+
+// ===================== MESSAGE =====================
+function addMessage(role, text) {
+  const bubble = document.createElement('div');
+  bubble.className = `message ${role}`;
+
+  bubble.innerHTML = role === "assistant"
+    ? marked.parse(text)
+    : `<p>${text}</p>`;
+
+  chatContainer.appendChild(bubble);
+
+  bubble.querySelectorAll('pre code').forEach(block => {
+    hljs.highlightElement(block);
+  });
+
+  scrollToBottom();
+}
+
+// ===================== SEND =====================
+async function sendMessage() {
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  addMessage('user', text);
+
+  chats[currentChatId].push({
+    role: "user",
+    content: text
+  });
+
+  userInput.value = '';
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: chats[currentChatId]
+      })
+    });
+
+    const data = await response.json();
+
+if (!response.ok || data.error) {
+  addMessage(
+    'assistant',
+    `⚠️ ${data.error || 'Something went wrong'}`
+  );
+  return;
+}
+
+addMessage('assistant', data.reply);
+
+    chats[currentChatId].push({
+      role: "assistant",
+      content: data.reply
+    });
+
+    saveChats();
+
+  } catch (err) {
+    console.error(err);
+    addMessage('assistant', '⚠️ Error occurred');
   }
-  }
+}
+
+// ===================== EVENTS =====================
+sendBtn.addEventListener('click', sendMessage);
+
+userInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+newChatBtn.addEventListener('click', createNewChat);
+clearChatBtn.addEventListener('click', clearCurrentChat);
+
+// ===================== INIT =====================
+if (!currentChatId || !chats[currentChatId]) {
+  createNewChat();
+} else {
+  loadChat(currentChatId);
+}
+menuBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("open");
+});
+
+renderChatList();
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      await navigator.serviceWorker.register("/service-worker.js");
+      console.log("Service Worker registered");
+    } catch (err) {
+      console.error("SW registration failed:", err);
+    }
+  });
+}
