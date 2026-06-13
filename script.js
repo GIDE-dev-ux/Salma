@@ -8,8 +8,6 @@ const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chatContainer');
 const newChatBtn = document.getElementById('newChatBtn');
 const clearChatBtn = document.getElementById('clearChatBtn');
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.querySelector(".sidebar");
 
 // ===================== UTILS =====================
 function scrollToBottom() {
@@ -21,34 +19,6 @@ function saveChats() {
   localStorage.setItem("currentChatId", currentChatId);
 }
 
-function renderChatList() {
-  const chatList = document.getElementById("chatList");
-
-  chatList.innerHTML = "";
-
-  Object.keys(chats)
-    .reverse()
-    .forEach(id => {
-      const item = document.createElement("div");
-
-      item.className =
-        `chat-item ${id === currentChatId ? "active" : ""}`;
-
-      item.textContent = `Chat ${id.slice(-4)}`;
-
-      item.onclick = () => {
-        loadChat(id);
-        renderChatList();
-
-        if (window.innerWidth <= 768) {
-          sidebar.classList.remove("open");
-        }
-      };
-
-      chatList.appendChild(item);
-    });
-}
-
 // ===================== CHAT SYSTEM =====================
 function createNewChat() {
   const id = Date.now().toString();
@@ -57,7 +27,6 @@ function createNewChat() {
 
   saveChats();
   loadChat(id);
-  renderChatList();
 }
 
 function loadChat(id) {
@@ -75,7 +44,6 @@ function loadChat(id) {
   }
 
   saveChats();
-  renderChatList(); // ADD THIS
 }
 
 // ===================== CLEAR CHAT =====================
@@ -100,11 +68,6 @@ function addMessage(role, text) {
     : `<p>${text}</p>`;
 
   chatContainer.appendChild(bubble);
-
-  bubble.querySelectorAll('pre code').forEach(block => {
-    hljs.highlightElement(block);
-  });
-
   scrollToBottom();
 }
 
@@ -133,15 +96,7 @@ async function sendMessage() {
 
     const data = await response.json();
 
-if (!response.ok || data.error) {
-  addMessage(
-    'assistant',
-    `⚠️ ${data.error || 'Something went wrong'}`
-  );
-  return;
-}
-
-addMessage('assistant', data.reply);
+    addMessage('assistant', data.reply);
 
     chats[currentChatId].push({
       role: "assistant",
@@ -171,19 +126,4 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-}
-menuBtn.addEventListener("click", () => {
-  sidebar.classList.toggle("open");
-});
-
-renderChatList();
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      await navigator.serviceWorker.register("/service-worker.js");
-      console.log("Service Worker registered");
-    } catch (err) {
-      console.error("SW registration failed:", err);
-    }
-  });
-}
+                 }
