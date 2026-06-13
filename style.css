@@ -41,51 +41,6 @@ body {
   overflow: hidden;
 }
 
-/* ================= SIDEBAR ================= */
-.sidebar {
-  width: 260px;
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-}
-
-#newChatBtn {
-  padding: 10px;
-  border-radius: 10px;
-  background: #222;
-  color: white;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-#searchChats {
-  width: 100%;
-  height: 44px;
-
-  margin-top: 12px;
-  margin-bottom: 12px;
-
-  padding: 0 12px;
-
-  background: #1a1a1a;
-  color: white;
-
-  border: 1px solid var(--border);
-  border-radius: 12px;
-
-  outline: none;
-}
-
-#searchChats::placeholder {
-  color: #777;
-}
-
-#chatList {
-  margin-top: 10px;
-  overflow-y: auto;
-}
 
 /* ================= CHAT ITEM ================= */
 .chat-item {
