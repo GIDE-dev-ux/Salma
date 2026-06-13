@@ -1,8 +1,8 @@
-const CACHE_NAME = "babi-bot-v7";
+const CACHE_NAME = "babi-bot-v8";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
-  "/styles.css",
+  "/style.css",
   "/script.js",
   "/favicon.png"
 ];
