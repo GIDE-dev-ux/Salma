@@ -25,7 +25,6 @@ function renderChatList() {
   if (!chatList) return;
 
   chatList.innerHTML = "";
-  chatList.innerHTML = "<div class='chat-item'>TEST CHAT</div>";
 
   console.log("Chats:", chats);
   console.log("Chat IDs:", Object.keys(chats));
