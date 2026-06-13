@@ -27,6 +27,7 @@ function createNewChat() {
 
   saveChats();
   loadChat(id);
+  renderChatList();
 }
 
 function loadChat(id) {
@@ -44,6 +45,7 @@ function loadChat(id) {
   }
 
   saveChats();
+  renderChatList(); // ADD THIS
 }
 
 // ===================== CLEAR CHAT =====================
@@ -68,6 +70,11 @@ function addMessage(role, text) {
     : `<p>${text}</p>`;
 
   chatContainer.appendChild(bubble);
+
+  bubble.querySelectorAll('pre code').forEach(block => {
+    hljs.highlightElement(block);
+  });
+
   scrollToBottom();
 }
 
@@ -96,7 +103,15 @@ async function sendMessage() {
 
     const data = await response.json();
 
-    addMessage('assistant', data.reply);
+if (!response.ok || data.error) {
+  addMessage(
+    'assistant',
+    `⚠️ ${data.error || 'Something went wrong'}`
+  );
+  return;
+}
+
+addMessage('assistant', data.reply);
 
     chats[currentChatId].push({
       role: "assistant",
@@ -126,4 +141,16 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-      }
+}
+
+renderChatList();
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      await navigator.serviceWorker.register("/service-worker.js");
+      console.log("Service Worker registered");
+    } catch (err) {
+      console.error("SW registration failed:", err);
+    }
+  });
+    }
