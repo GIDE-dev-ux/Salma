@@ -96,6 +96,8 @@ function removeTypingIndicator() {
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
+  sendBtn.disabled = true;
+userInput.disabled = true;
   
   
 
@@ -131,11 +133,15 @@ addMessage('assistant', data.reply);
       content: data.reply
     });
 
-    saveChats();
+    saveChats()
+    
+    sendBtn.disabled = false;
+userInput.disabled = false;
 
   } catch (err) {
     console.error(err);
-
+sendBtn.disabled = false;
+userInput.disabled = false;
 removeTypingIndicator();
 
 addMessage('assistant', '⚠️ Error occurred');
@@ -159,4 +165,5 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-}
+  }
+  
