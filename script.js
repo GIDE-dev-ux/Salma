@@ -10,15 +10,8 @@ const chatContainer = document.getElementById('chatContainer');
 const clearChatBtn = document.getElementById('clearChatBtn');
 
 // ===================== UTILS =====================
-function scrollToBottom(force = false) {
-  const distanceFromBottom =
-    chatContainer.scrollHeight -
-    chatContainer.scrollTop -
-    chatContainer.clientHeight;
-
-  if (force || distanceFromBottom < 200) {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  }
+function scrollToBottom() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 function saveChats() {
@@ -87,36 +80,7 @@ function addMessage(role, text) {
   `;
 
   chatContainer.appendChild(bubble);
-
-  // Highlight code blocks
-  bubble.querySelectorAll('pre code').forEach((block) => {
-
-  if (typeof hljs !== "undefined") {
-    hljs.highlightElement(block);
-  }
-
-  const pre = block.parentElement;
-
-if (pre.querySelector('.copy-btn')) return;
-
-const copyBtn = document.createElement('button');
-  copyBtn.className = 'copy-btn';
-  copyBtn.textContent = 'Copy';
-
-  copyBtn.onclick = () => {
-    navigator.clipboard.writeText(block.innerText);
-
-    copyBtn.textContent = 'Copied!';
-
-    setTimeout(() => {
-      copyBtn.textContent = 'Copy';
-    }, 2000);
-  };
-
-  pre.prepend(copyBtn);
-});
-
-  scrollToBottom(true);
+  scrollToBottom();
 }
 
 // ===================== TYPING INDICATOR =====================
@@ -126,13 +90,7 @@ function addTypingIndicator() {
   typing.className = 'message assistant';
   typing.id = 'typingIndicator';
 
-  typing.innerHTML = `
-<div class="typing">
-  <span></span>
-  <span></span>
-  <span></span>
-</div>
-`;
+  typing.innerHTML = '<p>⌛ BABI-Bot is typing...</p>';
 
   chatContainer.appendChild(typing);
   scrollToBottom();
@@ -165,10 +123,6 @@ async function sendMessage() {
     role: "user",
     content: text
   });
-  
-  if (!chats[currentChatId].title) {
-  chats[currentChatId].title = getChatTitle(text);
-}
 
   userInput.value = '';
   addTypingIndicator();
@@ -197,11 +151,6 @@ async function sendMessage() {
     content: data.reply
   });
 
-function getChatTitle(text) {
-  return text.length > 30
-    ? text.substring(0, 30) + "..."
-    : text;
-}
   saveChats();
 
 } catch (err) {
@@ -237,4 +186,5 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-      }
+}
+  
