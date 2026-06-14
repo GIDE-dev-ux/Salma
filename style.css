@@ -30,13 +30,14 @@ body {
   height: 100dvh;
   display: flex;
 
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* ================= APP ================= */
-.app {
+..app {
   width: 100%;
-  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 
@@ -157,6 +158,7 @@ body {
   border-top: 1px solid var(--border);
 
   width: 100%;
+  background: #000;
 }
 
 /* 🔥 CRITICAL FIX (DO NOT REMOVE) */
@@ -205,4 +207,14 @@ button {
   .message {
     max-width: 90%;
   }
+}
+
+/* ================= TIMESTAMP ================= */
+.timestamp {
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 6px;
+  text-align: right;
+.input-area {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
   }
