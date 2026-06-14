@@ -280,3 +280,44 @@ pre {
   position: relative;
   overflow-x: auto;
 }
+
+
+/* ================= CODE BLOCKS ================= */
+pre {
+  position: relative;
+  background: #111;
+  border-radius: 12px;
+  padding: 14px;
+  overflow-x: auto;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  border: none;
+  border-radius: 8px;
+
+  padding: 6px 10px;
+
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ================= TABLES ================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  border: 1px solid #444;
+  padding: 8px;
+}
+
+th {
+  background: #222;
+  }
