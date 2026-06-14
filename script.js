@@ -10,8 +10,15 @@ const chatContainer = document.getElementById('chatContainer');
 const clearChatBtn = document.getElementById('clearChatBtn');
 
 // ===================== UTILS =====================
-function scrollToBottom() {
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+function scrollToBottom(force = false) {
+  const distanceFromBottom =
+    chatContainer.scrollHeight -
+    chatContainer.scrollTop -
+    chatContainer.clientHeight;
+
+  if (force || distanceFromBottom < 200) {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
 }
 
 function saveChats() {
@@ -109,7 +116,7 @@ const copyBtn = document.createElement('button');
   pre.prepend(copyBtn);
 });
 
-  scrollToBottom();
+  scrollToBottom(true);
 }
 
 // ===================== TYPING INDICATOR =====================
@@ -158,6 +165,10 @@ async function sendMessage() {
     role: "user",
     content: text
   });
+  
+  if (!chats[currentChatId].title) {
+  chats[currentChatId].title = getChatTitle(text);
+}
 
   userInput.value = '';
   addTypingIndicator();
@@ -186,6 +197,11 @@ async function sendMessage() {
     content: data.reply
   });
 
+function getChatTitle(text) {
+  return text.length > 30
+    ? text.substring(0, 30) + "..."
+    : text;
+}
   saveChats();
 
 } catch (err) {
@@ -221,5 +237,4 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-      }
-    
+    }
