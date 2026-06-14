@@ -80,6 +80,12 @@ function addMessage(role, text) {
   `;
 
   chatContainer.appendChild(bubble);
+
+  // Highlight code blocks
+  bubble.querySelectorAll('pre code').forEach((block) => {
+    hljs.highlightElement(block);
+  });
+
   scrollToBottom();
 }
 
@@ -186,5 +192,5 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-}
-  
+    }
+    
