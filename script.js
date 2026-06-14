@@ -83,11 +83,16 @@ function addMessage(role, text) {
 
   // Highlight code blocks
   bubble.querySelectorAll('pre code').forEach((block) => {
-  hljs.highlightElement(block);
+
+  if (typeof hljs !== "undefined") {
+    hljs.highlightElement(block);
+  }
 
   const pre = block.parentElement;
 
-  const copyBtn = document.createElement('button');
+if (pre.querySelector('.copy-btn')) return;
+
+const copyBtn = document.createElement('button');
   copyBtn.className = 'copy-btn';
   copyBtn.textContent = 'Copy';
 
@@ -216,4 +221,5 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-}
+      }
+    
