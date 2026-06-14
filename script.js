@@ -71,10 +71,33 @@ function addMessage(role, text) {
   scrollToBottom();
 }
 
+// ===================== TYPING INDICATOR =====================
+function addTypingIndicator() {
+  const typing = document.createElement('div');
+
+  typing.className = 'message assistant';
+  typing.id = 'typingIndicator';
+
+  typing.innerHTML = '<p>⌛ BABI-Bot is typing...</p>';
+
+  chatContainer.appendChild(typing);
+  scrollToBottom();
+}
+
+function removeTypingIndicator() {
+  const typing = document.getElementById('typingIndicator');
+
+  if (typing) {
+    typing.remove();
+  }
+}
+
 // ===================== SEND =====================
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
+  
+  
 
 if (!chats[currentChatId]) {
   chats[currentChatId] = [];
@@ -87,7 +110,7 @@ if (!chats[currentChatId]) {
   });
 
   userInput.value = '';
-
+  addTypingIndicator();
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -99,7 +122,9 @@ if (!chats[currentChatId]) {
 
     const data = await response.json();
 
-    addMessage('assistant', data.reply);
+removeTypingIndicator();
+
+addMessage('assistant', data.reply);
 
     chats[currentChatId].push({
       role: "assistant",
@@ -110,7 +135,10 @@ if (!chats[currentChatId]) {
 
   } catch (err) {
     console.error(err);
-    addMessage('assistant', '⚠️ Error occurred');
+
+removeTypingIndicator();
+
+addMessage('assistant', '⚠️ Error occurred');
   }
 }
 
@@ -131,5 +159,4 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-    }
-                 
+}
