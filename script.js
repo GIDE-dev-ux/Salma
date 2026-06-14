@@ -58,14 +58,26 @@ function clearCurrentChat() {
   loadChat(currentChatId); // reload empty chat
 }
 
+function getCurrentTime() {
+  return new Date().toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
 // ===================== MESSAGE =====================
 function addMessage(role, text) {
   const bubble = document.createElement('div');
   bubble.className = `message ${role}`;
 
-  bubble.innerHTML = role === "assistant"
+  const content = role === "assistant"
     ? marked.parse(text)
     : `<p>${text}</p>`;
+
+  bubble.innerHTML = `
+    ${content}
+    <div class="timestamp">${getCurrentTime()}</div>
+  `;
 
   chatContainer.appendChild(bubble);
   scrollToBottom();
@@ -92,18 +104,19 @@ function removeTypingIndicator() {
   }
 }
 
-// ===================== SEND =====================
+
+// ===================== EVENTS =====================
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
-  sendBtn.disabled = true;
-userInput.disabled = true;
-  
-  
 
-if (!chats[currentChatId]) {
-  chats[currentChatId] = [];
-}
+  sendBtn.disabled = true;
+  userInput.disabled = true;
+
+  if (!chats[currentChatId]) {
+    chats[currentChatId] = [];
+  }
+
   addMessage('user', text);
 
   chats[currentChatId].push({
@@ -113,46 +126,53 @@ if (!chats[currentChatId]) {
 
   userInput.value = '';
   addTypingIndicator();
+
   try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: chats[currentChatId]
-      })
-    });
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      messages: chats[currentChatId]
+    })
+  });
 
-    const data = await response.json();
+  const data = await response.json();
 
-removeTypingIndicator();
-
-addMessage('assistant', data.reply);
-
-    chats[currentChatId].push({
-      role: "assistant",
-      content: data.reply
-    });
-
-    saveChats()
-    
-    sendBtn.disabled = false;
-userInput.disabled = false;
-
-  } catch (err) {
-    console.error(err);
-sendBtn.disabled = false;
-userInput.disabled = false;
-removeTypingIndicator();
-
-addMessage('assistant', '⚠️ Error occurred');
+  if (!response.ok) {
+    throw new Error(data.error || 'Server error');
   }
+
+  removeTypingIndicator();
+
+  addMessage('assistant', data.reply);
+
+  chats[currentChatId].push({
+    role: "assistant",
+    content: data.reply
+  });
+
+  saveChats();
+
+} catch (err) {
+  console.error(err);
+
+  removeTypingIndicator();
+
+  addMessage(
+    'assistant',
+    `⚠️ ${err.message || 'Error occurred'}`
+  );
+
+} finally {
+  sendBtn.disabled = false;
+  userInput.disabled = false;
 }
+} // Function closes here
 
-// ===================== EVENTS =====================
 sendBtn.addEventListener('click', sendMessage);
-
 userInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
     sendMessage();
   }
 });
@@ -165,5 +185,5 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-  }
+      }
   
