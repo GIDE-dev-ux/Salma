@@ -1,11 +1,13 @@
 // ===================== STATE =====================
-let chats = {};
-let currentChatId = null;
+let chats = JSON.parse(localStorage.getItem("chats")) || {};
+let currentChatId =
+  localStorage.getItem("currentChatId") || null;
 
 // ===================== ELEMENTS =====================
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chatContainer');
+const clearChatBtn = document.getElementById('clearChatBtn');
 
 // ===================== UTILS =====================
 function scrollToBottom() {
@@ -17,42 +19,15 @@ function saveChats() {
   localStorage.setItem("currentChatId", currentChatId);
 }
 
-  chatList.innerHTML = "";
-
-  console.log("Chats:", chats);
-  console.log("Chat IDs:", Object.keys(chats));
-
-  const filteredChats = Object.keys(chats).filter(id => {
-    return id.toLowerCase().includes(searchQuery.toLowerCase());
-  });
-
-  filteredChats.reverse().forEach(id => {
-    const item = document.createElement("div");
-
-    item.className =
-      "chat-item" +
-      (id === currentChatId ? " active" : "");
-
-    item.textContent = `Chat ${id.slice(-4)}`;
-
-    item.addEventListener("click", () => {
-      loadChat(id);
-      renderChatList();
-    });
-
-    chatList.appendChild(item);
-  });
-}
-
 // ===================== CHAT SYSTEM =====================
 function createNewChat() {
   const id = Date.now().toString();
+
   chats[id] = [];
   currentChatId = id;
 
   saveChats();
-renderChatList();
-loadChat(id);
+  loadChat(id);
 }
 
 function loadChat(id) {
@@ -69,11 +44,8 @@ function loadChat(id) {
     });
   }
 
-// Refresh sidebar
-saveChats();
-renderChatList();
+  saveChats();
 }
-
 // ===================== CLEAR CHAT =====================
 function clearCurrentChat() {
   if (!currentChatId) return;
@@ -104,6 +76,9 @@ async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
 
+if (!chats[currentChatId]) {
+  chats[currentChatId] = [];
+}
   addMessage('user', text);
 
   chats[currentChatId].push({
@@ -142,8 +117,10 @@ async function sendMessage() {
 // ===================== EVENTS =====================
 sendBtn.addEventListener('click', sendMessage);
 
-userInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') sendMessage();
+userInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    sendMessage();
+  }
 });
 
 clearChatBtn.addEventListener('click', clearCurrentChat);
@@ -154,4 +131,5 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-}
+    }
+                 
