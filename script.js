@@ -10,11 +10,9 @@ const chatContainer = document.getElementById('chatContainer');
 const clearChatBtn = document.getElementById('clearChatBtn');
 
 // ===================== UTILS =====================
-function scrollToBottom(force = false) {
-  const distanceFromBottom =
-    chatContainer.scrollHeight -
-    chatContainer.scrollTop -
-    chatContainer.clientHeight;
+function scrollToBottom() {
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
 
   if (force || distanceFromBottom < 200) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -116,7 +114,7 @@ const copyBtn = document.createElement('button');
   pre.prepend(copyBtn);
 });
 
-  scrollToBottom(true);
+  scrollToBottom();
 }
 
 // ===================== TYPING INDICATOR =====================
@@ -166,8 +164,6 @@ async function sendMessage() {
     content: text
   });
   
-  if (!chats[currentChatId].title) {
-  chats[currentChatId].title = getChatTitle(text);
 }
 
   userInput.value = '';
@@ -197,6 +193,11 @@ async function sendMessage() {
     content: data.reply
   });
 
+function getChatTitle(text) {
+  return text.length > 30
+    ? text.substring(0, 30) + "..."
+    : text;
+}
   saveChats();
 
 } catch (err) {
@@ -204,7 +205,7 @@ async function sendMessage() {
 
   removeTypingIndicator();
 
-  addMessage(
+  addMessage(i
     'assistant',
     `⚠️ ${err.message || 'Error occurred'}`
   );
@@ -232,4 +233,4 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-    }
+}
