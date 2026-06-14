@@ -30,14 +30,13 @@ body {
   min-height: 100dvh;
   display: flex;
 
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* ================= APP ================= */
 .app {
   width: 100%;
   min-height: 100dvh;
-  overflow: hidden;
 }
 
 
@@ -220,21 +219,10 @@ button {
   text-align: right;
 }
 
-.input-area {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 
   padding: 12px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
 
   border-top: 1px solid var(--border);
   background: #000;
-}
-.chat-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
   }
