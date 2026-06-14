@@ -96,7 +96,13 @@ function addTypingIndicator() {
   typing.className = 'message assistant';
   typing.id = 'typingIndicator';
 
-  typing.innerHTML = '<p>⌛ BABI-Bot is typing...</p>';
+  typing.innerHTML = `
+<div class="typing">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+`;
 
   chatContainer.appendChild(typing);
   scrollToBottom();
@@ -192,5 +198,4 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-    }
-    
+}
