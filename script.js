@@ -166,6 +166,7 @@ async function sendMessage() {
 } finally {
   sendBtn.disabled = false;
   userInput.disabled = false;
+  userInput.blur(); // prevent automatic focus
 }
 } // Function closes here
 
@@ -185,5 +186,5 @@ if (!currentChatId || !chats[currentChatId]) {
   createNewChat();
 } else {
   loadChat(currentChatId);
-                 }
+}
   
