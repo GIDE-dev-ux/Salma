@@ -83,8 +83,26 @@ function addMessage(role, text) {
 
   // Highlight code blocks
   bubble.querySelectorAll('pre code').forEach((block) => {
-    hljs.highlightElement(block);
-  });
+  hljs.highlightElement(block);
+
+  const pre = block.parentElement;
+
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'copy-btn';
+  copyBtn.textContent = 'Copy';
+
+  copyBtn.onclick = () => {
+    navigator.clipboard.writeText(block.innerText);
+
+    copyBtn.textContent = 'Copied!';
+
+    setTimeout(() => {
+      copyBtn.textContent = 'Copy';
+    }, 2000);
+  };
+
+  pre.prepend(copyBtn);
+});
 
   scrollToBottom();
 }
