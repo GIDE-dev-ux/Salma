@@ -219,10 +219,39 @@ button {
   text-align: right;
 }
 
+/* ================= TYPING ANIMATION ================= */
 
-  padding: 12px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+.typing {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
 
-  border-top: 1px solid var(--border);
-  background: #000;
+.typing span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #aaa;
+
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
   }
