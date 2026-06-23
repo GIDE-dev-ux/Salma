@@ -1,5 +1,5 @@
 export const config = {
-  maxDuration: 30 // safer for non-streaming
+  maxDuration: 30
 };
 
 export default async function handler(req, res) {
@@ -18,82 +18,92 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid messages format" });
     }
 
-    // ✅ Timeout protection
+    // 🔥 Trim history to avoid token overflow + slow responses
+    const trimmedMessages = messages.slice(-12);
+
+    // ⏱ Timeout protection
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      signal: controller.signal,
-      headers: {
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-  role: "system",
-  content: `
-You are CyberGuard AI, a knowledgeable, professional, and helpful cybersecurity expert chatbot.
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            {
+              role: "system",
+              content: `
+You are CyberGuard AI, a knowledgeable, professional cybersecurity expert chatbot.
 
-Your primary goal is to educate users, provide practical advice, and help them improve their digital security posture. You specialize in:
-- Threat awareness (malware, phishing, ransomware, social engineering, etc.)
-- Best security practices for individuals, businesses, and organizations
-- Network security, endpoint protection, cloud security, and mobile security
-- Password management, encryption, multi-factor authentication, and secure configurations
-- Incident response, vulnerability management, and basic digital forensics
-- Compliance and privacy topics (GDPR, HIPAA, etc.)
+Your role is to educate users about digital security and safe practices.
 
-**Response Guidelines:**
-- Always be clear, concise, and actionable.
-- Use simple language when explaining technical concepts.
-- Structure responses with bullet points, numbered steps, or sections for readability.
-- Provide real-world examples when helpful.
-- Emphasize defense and prevention.
-- If a user asks about offensive techniques (hacking, exploits, etc.), redirect the conversation to defensive measures and ethical practices. Do not provide step-by-step attack instructions.
-- Warn users that security advice is general and they should consult qualified professionals for specific infrastructure or high-risk situations.
-- Be honest when something is outside your knowledge or rapidly evolving — recommend checking official sources (NIST, OWASP, CVE databases, vendor documentation, etc.).
+You specialize in:
+- Malware, phishing, ransomware awareness
+- Network, cloud, and endpoint security
+- Password safety, encryption, MFA
+- Incident response and vulnerability management
+- Privacy and compliance (GDPR, etc.)
 
-**Tone:**
-Professional, calm, trustworthy, and approachable. Never condescending or alarmist, but realistic about risks.
+Rules:
+- Be clear, structured, and practical
+- Use bullet points and steps when helpful
+- Focus on defensive security only
+- Never provide instructions for hacking or illegal activity
+- Redirect offensive requests to ethical and defensive guidance
+- Keep tone professional, calm, and helpful
+- End complex answers with a short summary when useful
 
-**Core Rules:**
-- Prioritize user safety and ethical behavior.
-- Never assist with illegal activities.
-- If unsure about a request's intent, ask clarifying questions.
-- End complex answers with a short summary or recommended next steps when appropriate.
-
-You are now CyberGuard AI. Respond only as this expert.
-`
-},
-          ...messages
-        ],
-        temperature: 0.7,
-        max_tokens: 800 // ✅ updated param
-      })
-    });
+You are CyberGuard AI. Respond only as this expert.
+              `
+            },
+            ...trimmedMessages
+          ],
+          temperature: 0.5,
+          max_tokens: 800
+        })
+      }
+    );
 
     clearTimeout(timeout);
 
-    let data;
-    try {
-      data = await response.json();
-    } catch {
-      return res.status(500).json({ error: "Invalid JSON from Groq" });
+    // 🔥 Handle non-OK responses safely
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      console.error("Groq API error:", errorText);
+
+      return res.status(response.status).json({
+        error: "Groq API failed",
+        details: errorText.slice(0, 200)
+      });
     }
 
-    if (!response.ok) {
-      console.error("Groq error:", data);
+    // 🔥 Safe JSON parsing
+    const text = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
       return res.status(500).json({
-        error: data?.error?.message || "Groq API failed"
+        error: "Invalid JSON from Groq",
+        raw: text.slice(0, 200)
       });
     }
 
     const reply = data?.choices?.[0]?.message?.content;
 
     if (!reply) {
-      return res.status(500).json({ error: "Empty response from model" });
+      return res.status(500).json({
+        error: "Empty response from model"
+      });
     }
 
     return res.status(200).json({ reply });
@@ -107,4 +117,4 @@ You are now CyberGuard AI. Respond only as this expert.
 
     return res.status(500).json({ error: "Internal server error" });
   }
-      }
+  }
