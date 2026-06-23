@@ -70,7 +70,7 @@ You are now CyberGuard AI. Respond only as this expert.
           ...messages
         ],
         temperature: 0.7,
-        max_completion_tokens: 800 // ✅ updated param
+        max_tokens: 800 // ✅ updated param
       })
     });
 
