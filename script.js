@@ -71,8 +71,8 @@ function addMessage(role, text) {
   bubble.className = `message ${role}`;
 
   const content = role === "assistant"
-    ? marked.parse(text)
-    : `<p>${text}</p>`;
+  ? marked.parse(text || '')
+  : `<p>${text}</p>`;
 
   bubble.innerHTML = `
     ${content}
@@ -90,7 +90,13 @@ function addTypingIndicator() {
   typing.className = 'message assistant';
   typing.id = 'typingIndicator';
 
-  typing.innerHTML = '<p>⌛ BABI-Bot is typing...</p>';
+  typing.innerHTML = `
+<div class="typing">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+`;
 
   chatContainer.appendChild(typing);
   scrollToBottom();
@@ -107,6 +113,8 @@ function removeTypingIndicator() {
 
 // ===================== EVENTS =====================
 async function sendMessage() {
+    if (sendBtn.disabled) return;
+    
   const text = userInput.value.trim();
   if (!text) return;
 
