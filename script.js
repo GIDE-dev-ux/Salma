@@ -1,28 +1,78 @@
 // ===================== STATE =====================
-let chats = JSON.parse(localStorage.getItem("chats")) || {};
-let currentChatId =
-  localStorage.getItem("currentChatId") || null;
+let chats = {};
+let memory = {
+  name: null,
+  facts: []
+};
 
-// ===================== ELEMENTS =====================
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
-const chatContainer = document.getElementById('chatContainer');
-const clearChatBtn = document.getElementById('clearChatBtn');
-
-// ===================== UTILS =====================
-function scrollToBottom() {
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+try {
+  chats = JSON.parse(localStorage.getItem("chats")) || {};
+} catch (e) {
+  chats = {};
 }
 
+try {
+  memory = JSON.parse(localStorage.getItem("memory")) || {
+    name: null,
+    facts: []
+  };
+} catch (e) {
+  memory = { name: null, facts: [] };
+}
+
+let currentChatId = localStorage.getItem("currentChatId");
+
+// ===================== ELEMENTS =====================
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const chatContainer = document.getElementById("chatContainer");
+const clearChatBtn = document.getElementById("clearChatBtn");
+
+// ===================== SAVE =====================
 function saveChats() {
   localStorage.setItem("chats", JSON.stringify(chats));
   localStorage.setItem("currentChatId", currentChatId);
 }
 
+function saveMemory() {
+  localStorage.setItem("memory", JSON.stringify(memory));
+}
+
+// ===================== UTILS =====================
+function scrollToBottom() {
+  chatContainer.scrollTo({
+    top: chatContainer.scrollHeight,
+    behavior: "smooth"
+  });
+}
+
+// ===================== MEMORY ENGINE =====================
+function updateMemory(text) {
+  const lower = text.toLowerCase();
+
+  if (lower.includes("my name is")) {
+    const name = text.split("my name is")[1]?.trim();
+    if (name) memory.name = name;
+  }
+
+  if (
+    lower.includes("i like") ||
+    lower.includes("i love") ||
+    lower.includes("i prefer")
+  ) {
+    memory.facts.push(text);
+  }
+
+  if (memory.facts.length > 10) {
+    memory.facts.shift();
+  }
+
+  saveMemory();
+}
+
 // ===================== CHAT SYSTEM =====================
 function createNewChat() {
   const id = Date.now().toString();
-
   chats[id] = [];
   currentChatId = id;
 
@@ -32,47 +82,50 @@ function createNewChat() {
 
 function loadChat(id) {
   currentChatId = id;
-  chatContainer.innerHTML = '';
+  chatContainer.innerHTML = "";
 
   const chat = chats[id] || [];
 
   if (chat.length === 0) {
-    addMessage('assistant', "👋 Hi, I'm BABI-Bot.\nAsk me anything!");
+    addMessage(
+      "assistant",
+      "👋 Hi" + (memory.name ? ` ${memory.name}` : "") + ", I'm BABI-Bot."
+    );
   } else {
-    chat.forEach(msg => {
-      addMessage(msg.role, msg.content);
-    });
+    chat.forEach(msg => addMessage(msg.role, msg.content));
   }
 
   saveChats();
 }
+
 // ===================== CLEAR CHAT =====================
 function clearCurrentChat() {
   if (!currentChatId) return;
 
-  const confirmClear = confirm("Start a new conversation?");
-  if (!confirmClear) return;
+  if (!confirm("Start a new conversation?")) return;
 
-  chats[currentChatId] = []; // clear messages
+  chats[currentChatId] = [];
   saveChats();
-  loadChat(currentChatId); // reload empty chat
+  loadChat(currentChatId);
 }
 
+// ===================== TIME =====================
 function getCurrentTime() {
   return new Date().toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
+    hour: "2-digit",
+    minute: "2-digit"
   });
 }
 
 // ===================== MESSAGE =====================
 function addMessage(role, text) {
-  const bubble = document.createElement('div');
+  const bubble = document.createElement("div");
   bubble.className = `message ${role}`;
 
-  const content = role === "assistant"
-  ? marked.parse(text || '')
-  : `<p>${text}</p>`;
+  const content =
+    role === "assistant"
+      ? marked.parse(text || "")
+      : `<p>${text}</p>`;
 
   bubble.innerHTML = `
     ${content}
@@ -83,111 +136,106 @@ function addMessage(role, text) {
   scrollToBottom();
 }
 
-// ===================== TYPING INDICATOR =====================
-function addTypingIndicator() {
-  const typing = document.createElement('div');
-
-  typing.className = 'message assistant';
-  typing.id = 'typingIndicator';
-
-  typing.innerHTML = `
-<div class="typing">
-  <span></span>
-  <span></span>
-  <span></span>
-</div>
-`;
-
-  chatContainer.appendChild(typing);
+// ===================== STREAM MESSAGE =====================
+function createStreamingMessage() {
+  const bubble = document.createElement("div");
+  bubble.className = "message assistant";
+  bubble.innerHTML = "<p></p>";
+  chatContainer.appendChild(bubble);
   scrollToBottom();
+  return bubble;
 }
 
-function removeTypingIndicator() {
-  const typing = document.getElementById('typingIndicator');
-
-  if (typing) {
-    typing.remove();
-  }
-}
-
-
-// ===================== EVENTS =====================
+// ===================== SEND MESSAGE =====================
 async function sendMessage() {
-    if (sendBtn.disabled) return;
-    
+  if (sendBtn.disabled) return;
+
   const text = userInput.value.trim();
   if (!text) return;
 
   sendBtn.disabled = true;
   userInput.disabled = true;
 
-  if (!chats[currentChatId]) {
-    chats[currentChatId] = [];
-  }
+  if (!chats[currentChatId]) chats[currentChatId] = [];
 
-  addMessage('user', text);
+  addMessage("user", text);
 
   chats[currentChatId].push({
     role: "user",
     content: text
   });
 
-  userInput.value = '';
-  addTypingIndicator();
+  updateMemory(text);
+
+  userInput.value = "";
+
+  const bubble = createStreamingMessage();
+  let fullText = "";
 
   try {
-  const response = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messages: chats[currentChatId]
-    })
-  });
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: chats[currentChatId],
+        memory: memory
+      })
+    });
 
-  const data = await response.json();
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
 
-  if (!response.ok) {
-    throw new Error(data.error || 'Server error');
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+      const lines = chunk.split("\n");
+
+      for (let line of lines) {
+        if (!line.startsWith("data: ")) continue;
+
+        const data = line.replace("data: ", "");
+
+        if (data === "[DONE]") break;
+
+        try {
+          const token = JSON.parse(data);
+          fullText += token;
+
+          bubble.innerHTML = marked.parse(fullText);
+          scrollToBottom();
+        } catch {}
+      }
+    }
+
+    chats[currentChatId].push({
+      role: "assistant",
+      content: fullText
+    });
+
+    saveChats();
+  } catch (err) {
+    console.error(err);
+    bubble.innerHTML = "⚠️ Error generating response";
+  } finally {
+    sendBtn.disabled = false;
+    userInput.disabled = false;
+    userInput.blur();
   }
-
-  removeTypingIndicator();
-
-  addMessage('assistant', data.reply);
-
-  chats[currentChatId].push({
-    role: "assistant",
-    content: data.reply
-  });
-
-  saveChats();
-
-} catch (err) {
-  console.error(err);
-
-  removeTypingIndicator();
-
-  addMessage(
-    'assistant',
-    `⚠️ ${err.message || 'Error occurred'}`
-  );
-
-} finally {
-  sendBtn.disabled = false;
-  userInput.disabled = false;
-  userInput.blur(); // prevent automatic focus
 }
-} // Function closes here
 
-sendBtn.addEventListener('click', sendMessage);
-userInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
+// ===================== EVENTS =====================
+sendBtn.addEventListener("click", sendMessage);
+
+userInput.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     sendMessage();
   }
 });
 
-clearChatBtn.addEventListener('click', clearCurrentChat);
-
+clearChatBtn.addEventListener("click", clearCurrentChat);
 
 // ===================== INIT =====================
 if (!currentChatId || !chats[currentChatId]) {
@@ -195,4 +243,13 @@ if (!currentChatId || !chats[currentChatId]) {
 } else {
   loadChat(currentChatId);
 }
-  
+
+// ===================== PWA REGISTER =====================
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then(() => console.log("PWA ready"))
+      .catch(err => console.log(err));
+  });
+      }
