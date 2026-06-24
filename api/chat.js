@@ -12,7 +12,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { messages } = req.body;
+    const {
+  messages,
+  model = "llama-3.3-70b-versatile"
+} = req.body || {};
 
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: "Invalid messages format" });
@@ -22,7 +25,12 @@ export default async function handler(req, res) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    let response;
+
+try {
+  response = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
       method: "POST",
       signal: controller.signal,
       headers: {
@@ -30,7 +38,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: model,
         messages: [
           {
   role: "system",
@@ -67,14 +75,16 @@ Professional, calm, trustworthy, and approachable. Never condescending or alarmi
 You are now CyberGuard AI. Respond only as this expert.
 `
 },
-          ...messages
+           ...messages
         ],
-        temperature: 0.7,
-        max_tokens: 800 // ✅ updated param
+        temperature: 0.5,
+        max_tokens: 1000
       })
-    });
-
-    clearTimeout(timeout);
+    }
+  );
+} finally {
+  clearTimeout(timeout);
+}
 
     let data;
     try {
@@ -105,6 +115,7 @@ You are now CyberGuard AI. Respond only as this expert.
       return res.status(504).json({ error: "Request timeout" });
     }
 
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error"
+   });
   }
-      }
+}
