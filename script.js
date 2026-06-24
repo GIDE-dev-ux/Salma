@@ -252,4 +252,4 @@ if ("serviceWorker" in navigator) {
       .then(() => console.log("PWA ready"))
       .catch(err => console.log(err));
   });
-      }
+}
