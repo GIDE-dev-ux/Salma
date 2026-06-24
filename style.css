@@ -2,7 +2,6 @@
 :root {
   --bg-main: #0a0a0a;
   --bg-secondary: #111;
-  --bg-sidebar: #0f0f0f;
   --bg-bot: #1e1e1e;
   --primary: #ff0080;
   --secondary: #ff8c00;
@@ -17,7 +16,7 @@
   box-sizing: border-box;
 }
 
-/* ================= BODY ================= */
+/* ================= BASE ================= */
 html, body {
   height: 100%;
 }
@@ -26,47 +25,21 @@ body {
   font-family: 'Segoe UI', system-ui, sans-serif;
   background: #000;
   color: var(--text-main);
-
   min-height: 100dvh;
   display: flex;
-
   overflow-x: hidden;
 }
 
-/* ================= APP ================= */
+/* ================= APP WRAPPER ================= */
 .app {
   width: 100%;
   min-height: 100dvh;
 }
 
-
-/* ================= CHAT ITEM ================= */
-.chat-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  background: #1a1a1a;
-}
-
-.chat-item.active {
-  background: #333;
-}
-
-.delete-btn {
-  background: none;
-  border: none;
-  color: #aaa;
-  cursor: pointer;
-}
-
-/* ================= MAIN ================= */
+/* ================= MAIN LAYOUT ================= */
 .main {
   width: 100%;
   min-height: 100dvh;
-
   display: flex;
   flex-direction: column;
 }
@@ -76,7 +49,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   background: #000;
@@ -94,7 +66,7 @@ body {
   border-radius: 50%;
 }
 
-/* ================= CHAT ================= */
+/* ================= CHAT AREA ================= */
 .chat-container {
   flex: 1;
   display: flex;
@@ -106,29 +78,52 @@ body {
 .messages {
   flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
   padding: 16px;
-
   display: flex;
   flex-direction: column;
   gap: 12px;
-
-  min-height: 0;
   scroll-behavior: smooth;
 }
 
-/* ================= MESSAGE ================= */
+/* Scrollbar */
+.messages::-webkit-scrollbar {
+  width: 5px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 10px;
+}
+
+/* ================= MESSAGE BUBBLES ================= */
 .message {
   max-width: 80%;
   padding: 14px;
   border-radius: 16px;
   line-height: 1.5;
-
   word-wrap: break-word;
   overflow-wrap: break-word;
+  animation: fadeIn 0.2s ease-in-out;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* prevent media/code overflow */
+/* USER MESSAGE */
+.message.user {
+  align-self: flex-end;
+  background: linear-gradient(45deg, var(--primary), var(--secondary));
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+/* BOT MESSAGE */
+.message.assistant {
+  align-self: flex-start;
+  background: var(--bg-bot);
+  color: #fff;
+  border-bottom-left-radius: 4px;
+}
+
+/* Media safety */
 .message img,
 .message pre,
 .message code {
@@ -137,78 +132,47 @@ body {
   display: block;
 }
 
-.user {
-  align-self: flex-end;
-  background: linear-gradient(45deg, var(--primary), var(--secondary));
-}
-
-.assistant {
-  align-self: flex-start;
-  background: var(--bg-bot);
-}
-
-/* ================= INPUT ================= */
+/* ================= INPUT AREA ================= */
 .input-area {
   display: flex;
   align-items: center;
   gap: 10px;
-
   padding: 12px;
   border-top: 1px solid var(--border);
-
-  width: 100%;
   background: #000;
 }
 
-/* 🔥 CRITICAL FIX (DO NOT REMOVE) */
-input, textarea, select, button {
-  font-size: max(16px, 1em);
-}
-
-/* INPUT FIELD */
+/* Input field */
 #userInput {
   flex: 1;
-
   padding: 14px;
   border-radius: 999px;
-
   border: 1px solid #333;
   background: #1a1a1a;
   color: white;
-}
-#userInput {
-  font-size: 16px;
+  outline: none;
 }
 
-input:focus {
+/* Focus state */
+#userInput:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(255, 0, 128, 0.2);
+}
+
+/* Fix mobile zoom issue */
+input, textarea, select {
+  font-size: max(16px, 1em);
 }
 
 /* SEND BUTTON */
-button {
+#sendBtn {
   padding: 10px 14px;
   border-radius: 999px;
   border: none;
   background: linear-gradient(45deg, var(--primary), var(--secondary));
   cursor: pointer;
-
   touch-action: manipulation;
-}
-
-/* ================= SCROLL ================= */
-.messages::-webkit-scrollbar {
-  width: 5px;
-}
-
-.messages::-webkit-scrollbar-thumb {
-  background: #444;
-}
-
-/* ================= MOBILE ================= */
-@media (max-width: 768px) {
-  .message {
-    max-width: 90%;
-  }
+  color: white;
 }
 
 /* ================= TIMESTAMP ================= */
@@ -219,8 +183,7 @@ button {
   text-align: right;
 }
 
-/* ================= TYPING ANIMATION ================= */
-
+/* ================= TYPING INDICATOR ================= */
 .typing {
   display: flex;
   gap: 5px;
@@ -232,7 +195,6 @@ button {
   height: 8px;
   border-radius: 50%;
   background: #aaa;
-
   animation: bounce 1.2s infinite ease-in-out;
 }
 
@@ -244,14 +206,32 @@ button {
   animation-delay: 0.4s;
 }
 
+/* ================= ANIMATIONS ================= */
 @keyframes bounce {
   0%, 80%, 100% {
     transform: scale(0.6);
     opacity: 0.5;
   }
-
   40% {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .message {
+    max-width: 90%;
   }
   }
