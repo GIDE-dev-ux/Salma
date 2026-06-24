@@ -190,7 +190,6 @@ async function sendMessage() {
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    
     const apiMessages = chats[currentChatId].map(msg => ({
   role: msg.role,
   content: msg.content
