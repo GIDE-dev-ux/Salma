@@ -30,7 +30,7 @@ function saveChats() {
 
 // ===================== CHAT SYSTEM =====================
 function createNewChat() {
-  const id = Date.now().toString();
+  const id = crypto.randomUUID();
 
   chats[id] = [];
   currentChatId = id;
@@ -50,7 +50,11 @@ function loadChat(id) {
     addMessage('assistant', "👋 Hi, I'm BABI-Bot.\nAsk me anything!");
   } else {
     chat.forEach(msg => {
-      addMessage(msg.role, msg.content);
+      addMessage(
+  msg.role,
+  msg.content,
+  msg.timestamp
+);
     });
   }
 
@@ -77,8 +81,9 @@ function getCurrentTime() {
 }
 
 // ===================== MESSAGE =====================
-function addMessage(role, text) {
+function addMessage(role, text, timestamp = Date.now()) {
   const bubble = document.createElement('div');
+  
   bubble.className = `message ${role}`;
 
   const content = role === "assistant"
@@ -87,7 +92,12 @@ function addMessage(role, text) {
 
   bubble.innerHTML = `
     ${content}
-    <div class="timestamp">${getCurrentTime()}</div>
+    <div class="timestamp">
+  ${new Date(timestamp).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  })}
+</div>
   `;
 
   chatContainer.appendChild(bubble);
@@ -136,9 +146,12 @@ function renderChatList() {
         "chat-item" +
         (id === currentChatId ? " active" : "");
 
-      div.textContent =
-        chats[id]?.[0]?.content?.slice(0, 30) ||
-        "New Chat";
+  const firstUserMessage =
+  chats[id]?.find(msg => msg.role === "user");
+
+div.textContent =
+  firstUserMessage?.content?.slice(0, 30) ||
+  "New Chat";
 
       div.onclick = () => {
         loadChat(id);
@@ -165,9 +178,10 @@ async function sendMessage() {
   addMessage('user', text);
 
   chats[currentChatId].push({
-    role: "user",
-    content: text
-  });
+  role: "user",
+  content: text,
+  timestamp: Date.now()
+});
 
   userInput.value = '';
   addTypingIndicator();
@@ -177,8 +191,9 @@ async function sendMessage() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      messages: chats[currentChatId]
-    })
+  messages: chats[currentChatId],
+  model: selectedModel
+})
   });
 
   const data = await response.json();
@@ -192,10 +207,10 @@ async function sendMessage() {
   addMessage('assistant', data.reply);
 
   chats[currentChatId].push({
-    role: "assistant",
-    content: data.reply
-  });
-
+  role: "assistant",
+  content: data.reply,
+  timestamp: Date.now()
+});
   saveChats()
   renderChatList();
 
@@ -226,17 +241,49 @@ userInput.addEventListener('keydown', (e) => {
 
 clearChatBtn.addEventListener('click', clearCurrentChat);
 
-menuBtn?.addEventListener('click', () => {
-  sidebar.classList.toggle('open');
+// ===================== SIDEBAR =====================
+const sidebarOverlay =
+  document.getElementById("sidebarOverlay");
+
+function closeSidebar() {
+  sidebar.classList.remove("open");
+
+  if (sidebarOverlay) {
+    sidebarOverlay.classList.remove("show");
+  }
+}
+
+menuBtn?.addEventListener("click", () => {
+  sidebar.classList.toggle("open");
+
+  if (sidebarOverlay) {
+    sidebarOverlay.classList.toggle("show");
+  }
 });
 
-newChatBtn?.addEventListener('click', () => {
+sidebarOverlay?.addEventListener("click", () => {
+  closeSidebar();
+});
+
+document.addEventListener("click", (e) => {
+  if (
+    sidebar.classList.contains("open") &&
+    !sidebar.contains(e.target) &&
+    e.target !== menuBtn &&
+    !menuBtn.contains(e.target)
+  ) {
+    closeSidebar();
+  }
+});
+
+newChatBtn?.addEventListener("click", () => {
   createNewChat();
 
   if (window.innerWidth < 769) {
-    sidebar.classList.remove('open');
+    closeSidebar();
   }
 });
+
 
 if (modelSelector) {
   modelSelector.value = selectedModel;
