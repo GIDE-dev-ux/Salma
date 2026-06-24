@@ -29,19 +29,54 @@ marked.setOptions({
 
 <div class="app">
 
-  <div class="main">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
 
-    <!-- HEADER -->
-    <div class="header">
-      <img src="/favicon.png" class="logo" />
-      <h2>BABI-Bot</h2>
-
-      <button id="clearChatBtn" title="Clear Chat">
-        🗑️
-      </button>
+    <div class="sidebar-header">
+      <button id="newChatBtn">+ New Chat</button>
     </div>
 
-    <!-- CHAT -->
+    <div class="chat-list" id="chatList"></div>
+
+    <div class="sidebar-footer">
+
+      <select id="modelSelector">
+        <option value="llama-3.3-70b-versatile">
+          Llama 3.3 70B
+        </option>
+
+        <option value="llama-3.1-8b-instant">
+          Llama 3.1 8B
+        </option>
+
+        <option value="deepseek-r1-distill-llama-70b">
+          DeepSeek R1
+        </option>
+      </select>
+
+      <button id="exportBtn">
+        Export Chat
+      </button>
+
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="header">
+
+      <button id="menuBtn">☰</button>
+
+      <img src="/favicon.png" class="logo" />
+
+      <h2>CyberGuard AI</h2>
+
+      <button id="clearChatBtn">🗑️</button>
+
+    </div>
+
     <div class="chat-container">
 
       <div class="messages" id="chatContainer"></div>
@@ -51,7 +86,7 @@ marked.setOptions({
         <input
           type="text"
           id="userInput"
-          placeholder="Ask anything..."
+          placeholder="Ask CyberGuard AI..."
           autocomplete="off"
         />
 
@@ -61,7 +96,7 @@ marked.setOptions({
 
     </div>
 
-  </div>
+  </main>
 
 </div>
 
