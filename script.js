@@ -2,12 +2,21 @@
 let chats = JSON.parse(localStorage.getItem("chats")) || {};
 let currentChatId =
   localStorage.getItem("currentChatId") || null;
+  let selectedModel =
+  localStorage.getItem("selectedModel") ||
+  "llama-3.3-70b-versatile";
 
 // ===================== ELEMENTS =====================
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chatContainer');
 const clearChatBtn = document.getElementById('clearChatBtn');
+const sidebar = document.getElementById('sidebar');
+const menuBtn = document.getElementById('menuBtn');
+const newChatBtn = document.getElementById('newChatBtn');
+const chatList = document.getElementById('chatList');
+const modelSelector = document.getElementById('modelSelector');
+const exportBtn = document.getElementById('exportBtn');
 
 // ===================== UTILS =====================
 function scrollToBottom() {
@@ -27,7 +36,8 @@ function createNewChat() {
   currentChatId = id;
 
   saveChats();
-  loadChat(id);
+loadChat(id);
+renderChatList();
 }
 
 function loadChat(id) {
@@ -45,6 +55,7 @@ function loadChat(id) {
   }
 
   saveChats();
+renderChatList();
 }
 // ===================== CLEAR CHAT =====================
 function clearCurrentChat() {
@@ -110,6 +121,32 @@ function removeTypingIndicator() {
   }
 }
 
+function renderChatList() {
+  if (!chatList) return;
+
+  chatList.innerHTML = "";
+
+  Object.keys(chats)
+    .reverse()
+    .forEach(id => {
+
+      const div = document.createElement("div");
+
+      div.className =
+        "chat-item" +
+        (id === currentChatId ? " active" : "");
+
+      div.textContent =
+        chats[id]?.[0]?.content?.slice(0, 30) ||
+        "New Chat";
+
+      div.onclick = () => {
+        loadChat(id);
+      };
+
+      chatList.appendChild(div);
+    });
+}
 
 // ===================== EVENTS =====================
 async function sendMessage() {
@@ -159,7 +196,8 @@ async function sendMessage() {
     content: data.reply
   });
 
-  saveChats();
+  saveChats()
+  renderChatList();
 
 } catch (err) {
   console.error(err);
@@ -188,6 +226,30 @@ userInput.addEventListener('keydown', (e) => {
 
 clearChatBtn.addEventListener('click', clearCurrentChat);
 
+menuBtn?.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+});
+
+newChatBtn?.addEventListener('click', () => {
+  createNewChat();
+
+  if (window.innerWidth < 769) {
+    sidebar.classList.remove('open');
+  }
+});
+
+if (modelSelector) {
+  modelSelector.value = selectedModel;
+
+  modelSelector.addEventListener('change', () => {
+    selectedModel = modelSelector.value;
+
+    localStorage.setItem(
+      'selectedModel',
+      selectedModel
+    );
+  });
+}
 
 // ===================== INIT =====================
 if (!currentChatId || !chats[currentChatId]) {
@@ -195,4 +257,5 @@ if (!currentChatId || !chats[currentChatId]) {
 } else {
   loadChat(currentChatId);
 }
-  
+
+renderChatList();
