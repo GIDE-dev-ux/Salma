@@ -236,7 +236,13 @@ const response = await fetch('/api/chat', {
   })
 });
 
-  const data = await response.json();
+  let data;
+
+try {
+  data = await response.json();
+} catch {
+  throw new Error("Invalid server response");
+}
 
   if (!response.ok) {
     throw new Error(data.error || 'Server error');
@@ -353,33 +359,26 @@ if (modelSelector) {
  exportBtn?.addEventListener("click", () => {
   if (!currentChatId) return;
 
-  const data = JSON.stringify(
-    chats[currentChatId],
-    null,
-    2
-  );
+  let text = "";
+
+  chats[currentChatId].forEach(msg => {
+    text += `${msg.role.toUpperCase()}\n`;
+    text += `${msg.content}\n\n`;
+  });
 
   const blob = new Blob(
-    [data],
-    { type: "application/json" }
+    [text],
+    { type: "text/plain" }
   );
 
-  const url =
-    URL.createObjectURL(blob);
+  const url = URL.createObjectURL(blob);
 
-  const a =
-    document.createElement("a");
-
+  const a = document.createElement("a");
   a.href = url;
-  a.download = "chat.json";
+  a.download = "chat.txt";
   a.click();
 
   URL.revokeObjectURL(url);
 });
-if (!currentChatId || !chats[currentChatId]) {
-  createNewChat();
-} else {
-  loadChat(currentChatId);
-}
 
 renderChatList();
