@@ -331,3 +331,20 @@ button {
 .copy-btn:hover{
   opacity:0.85;
 }
+
+pre {
+  background: #111;
+  padding: 12px;
+  border-radius: 10px;
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+code {
+  font-family: Consolas, monospace;
+  font-size: 14px;
+}
+
+.hljs {
+  background: transparent !important;
+}
