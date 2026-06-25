@@ -136,11 +136,13 @@ if (copyBtn) {
   });
 }
 
-bubble
-  .querySelectorAll("pre code")
-  .forEach((block) => {
-    hljs.highlightElement(block);
-  });
+if (window.hljs) {
+  bubble
+    .querySelectorAll("pre code")
+    .forEach((block) => {
+      hljs.highlightElement(block);
+    });
+}
 
 scrollToBottom();
 }
