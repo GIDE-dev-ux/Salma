@@ -52,7 +52,10 @@ function loadChat(id) {
   const chat = chats[id] || [];
 
   if (chat.length === 0) {
-    addMessage('assistant', "👋 Hi, I'm BABI-Bot.\nAsk me anything!");
+    addMessage(
+ "assistant",
+ "👋 Hi, I'm CyberGuard AI.\nHow can I help you today?"
+);
   } else {
     chat.forEach(msg => {
       addMessage(
@@ -172,7 +175,37 @@ function removeTypingIndicator() {
 function renderChatList() {
   if (!chatList) return;
 
-  chatList.innerHTML = "";
+  item.innerHTML = `
+  <span>${chatTitle}</span>
+  <button class="delete-btn">🗑️</button>
+`;
+
+  const deleteBtn = item.querySelector(".delete-btn");
+
+deleteBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+
+  if (!confirm("Delete this chat?")) return;
+
+  delete chats[chatId];
+
+  localStorage.setItem(
+    "cyberguard_chats",
+    JSON.stringify(chats)
+  );
+
+  const ids = Object.keys(chats);
+
+  if (ids.length) {
+    currentChatId = ids[0];
+  } else {
+    createNewChat();
+  }
+
+  saveChats();
+  renderChatList();
+  loadChat();
+});
 
   Object.keys(chats)
     .reverse()
