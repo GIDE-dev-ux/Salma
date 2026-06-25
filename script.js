@@ -275,6 +275,7 @@ async function sendMessage() {
 });
 
   userInput.value = '';
+userInput.style.height = 'auto';
   addTypingIndicator();
 
   try {
@@ -352,6 +353,12 @@ userInput.addEventListener('keydown', (e) => {
     e.preventDefault();
     sendMessage();
   }
+});
+
+userInput.addEventListener("input", () => {
+  userInput.style.height = "auto";
+  userInput.style.height =
+    userInput.scrollHeight + "px";
 });
 
 clearChatBtn.addEventListener('click', clearCurrentChat);
