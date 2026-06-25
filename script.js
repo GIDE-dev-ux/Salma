@@ -204,30 +204,6 @@ function renderChatList() {
     });
 }
 
-  Object.keys(chats)
-    .reverse()
-    .forEach(id => {
-
-      const div = document.createElement("div");
-
-      div.className =
-        "chat-item" +
-        (id === currentChatId ? " active" : "");
-
-  const firstUserMessage =
-  chats[id]?.find(msg => msg.role === "user");
-
-div.textContent =
-  firstUserMessage?.content?.slice(0, 30) ||
-  "New Chat";
-
-      div.onclick = () => {
-        loadChat(id);
-      };
-
-      chatList.appendChild(div);
-    });
-}
 
 // ===================== EVENTS =====================
 async function sendMessage() {
@@ -415,5 +391,11 @@ if (modelSelector) {
 
   URL.revokeObjectURL(url);
 });
+
+  if (!currentChatId || !chats[currentChatId]) {
+  createNewChat();
+} else {
+  loadChat(currentChatId);
+}
 
 renderChatList();
