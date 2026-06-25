@@ -1,4 +1,4 @@
-/* ================= ROOT ================= */
+  /* ================= ROOT ================= */
 :root {
   --bg-main: #0a0a0a;
   --bg-secondary: #111;
@@ -60,6 +60,14 @@ body {
   border: none;
   color: #aaa;
   cursor: pointer;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+.delete-btn {
+  opacity: 0.7;
 }
 
 /* ================= MAIN ================= */
