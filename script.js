@@ -175,37 +175,34 @@ function removeTypingIndicator() {
 function renderChatList() {
   if (!chatList) return;
 
-  item.innerHTML = `
-  <span>${chatTitle}</span>
-  <button class="delete-btn">🗑️</button>
-`;
+  chatList.innerHTML = "";
 
-  const deleteBtn = item.querySelector(".delete-btn");
+  Object.keys(chats)
+    .reverse()
+    .forEach(id => {
 
-deleteBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
+      const div = document.createElement("div");
 
-  if (!confirm("Delete this chat?")) return;
+      div.className =
+        "chat-item" +
+        (id === currentChatId ? " active" : "");
 
-  delete chats[chatId];
+      const firstUserMessage =
+        chats[id]?.find(
+          msg => msg.role === "user"
+        );
 
-  localStorage.setItem(
-    "cyberguard_chats",
-    JSON.stringify(chats)
-  );
+      div.textContent =
+        firstUserMessage?.content?.slice(0, 30) ||
+        "New Chat";
 
-  const ids = Object.keys(chats);
+      div.onclick = () => {
+        loadChat(id);
+      };
 
-  if (ids.length) {
-    currentChatId = ids[0];
-  } else {
-    createNewChat();
-  }
-
-  saveChats();
-  renderChatList();
-  loadChat();
-});
+      chatList.appendChild(div);
+    });
+}
 
   Object.keys(chats)
     .reverse()
