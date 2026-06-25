@@ -313,3 +313,21 @@ button {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* =====================
+   COPY BUTTON
+===================== */
+
+.copy-btn{
+  margin-top:8px;
+  padding:6px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:12px;
+  transition:0.2s;
+}
+
+.copy-btn:hover{
+  opacity:0.85;
+}
