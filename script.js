@@ -187,19 +187,21 @@ async function sendMessage() {
   addTypingIndicator();
 
   try {
-  const response = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    const apiMessages = chats[currentChatId].map(msg => ({
+  const apiMessages = chats[currentChatId].map(msg => ({
   role: msg.role,
   content: msg.content
 }));
 
-body: JSON.stringify({
-  messages: apiMessages,
-  model: selectedModel
-})
-  });
+const response = await fetch('/api/chat', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    messages: apiMessages,
+    model: selectedModel
+  })
+});
 
   const data = await response.json();
 
