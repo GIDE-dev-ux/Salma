@@ -24,7 +24,6 @@ function scrollToBottom() {
     behavior: "smooth",
     block: "end"
   });
- }
 }
 
 function saveChats() {
