@@ -20,7 +20,11 @@ const exportBtn = document.getElementById('exportBtn');
 
 // ===================== UTILS =====================
 function scrollToBottom() {
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  chatContainer.lastElementChild?.scrollIntoView({
+    behavior: "smooth",
+    block: "end"
+  });
+ }
 }
 
 function saveChats() {
@@ -95,16 +99,35 @@ function addMessage(role, text, timestamp = Date.now()) {
   : `<p>${text}</p>`;
 
   bubble.innerHTML = `
-    ${content}
-    <div class="timestamp">
-  ${new Date(timestamp).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  })}
-</div>
-  `;
+  ${content}
+
+  ${
+    role === "assistant"
+      ? `<button class="copy-btn">📋 Copy</button>`
+      : ""
+  }
+
+  <div class="timestamp">
+    ${new Date(timestamp).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    })}
+  </div>
+`;
 
   chatContainer.appendChild(bubble);
+  const copyBtn = bubble.querySelector(".copy-btn");
+
+if (copyBtn) {
+  copyBtn.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(text);
+    copyBtn.textContent = "✅ Copied";
+
+    setTimeout(() => {
+      copyBtn.textContent = "📋 Copy";
+    }, 2000);
+  });
+}
 
 document
   .querySelectorAll("pre code")
