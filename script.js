@@ -136,7 +136,7 @@ if (copyBtn) {
   });
 }
 
-document
+bubble
   .querySelectorAll("pre code")
   .forEach((block) => {
     hljs.highlightElement(block);
@@ -192,9 +192,42 @@ function renderChatList() {
           msg => msg.role === "user"
         );
 
-      div.textContent =
-        firstUserMessage?.content?.slice(0, 30) ||
-        "New Chat";
+      const title =
+  firstUserMessage?.content?.slice(0, 30) ||
+  "New Chat";
+
+div.innerHTML = `
+  <span>${title}</span>
+  <button class="delete-btn">🗑️</button>
+`;
+
+const deleteBtn =
+  div.querySelector(".delete-btn");
+  
+
+deleteBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+
+  if (!confirm("Delete this chat?")) return;
+
+  delete chats[id];
+  saveChats();
+
+  if (currentChatId === id) {
+    const remainingChats =
+      Object.keys(chats);
+
+    if (remainingChats.length > 0) {
+      currentChatId = remainingChats[0];
+loadChat(currentChatId);
+    } else {
+      createNewChat();
+    }
+  }
+
+  saveChats();
+  renderChatList();
+});
 
       div.onclick = () => {
         loadChat(id);
