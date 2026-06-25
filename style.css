@@ -1,4 +1,4 @@
-  /* ================= ROOT ================= */
+/* ================= ROOT ================= */
 :root {
   --bg-main: #0a0a0a;
   --bg-secondary: #111;
@@ -178,11 +178,16 @@ input, textarea, select, button {
   flex: 1;
 
   padding: 14px;
-  border-radius: 999px;
+  border-radius: 24px;
 
   border: 1px solid #333;
   background: #1a1a1a;
   color: white;
+
+  resize: none;
+  overflow-y: hidden;
+  min-height: 44px;
+  max-height: 200px;
 }
 #userInput {
   font-size: 16px;
@@ -195,7 +200,7 @@ input:focus {
 /* SEND BUTTON */
 button {
   padding: 10px 14px;
-  border-radius: 999px;
+  border-radius: 24px;
   border: none;
   background: linear-gradient(45deg, var(--primary), var(--secondary));
   cursor: pointer;
@@ -412,4 +417,4 @@ code {
 
 .copy-code-btn:hover {
   background: rgba(255,255,255,0.25);
-  }
+}
