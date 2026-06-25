@@ -395,3 +395,21 @@ code {
     transform:translateY(-6px);
   }
 }
+
+.copy-code-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  z-index: 10;
+}
+
+.copy-code-btn:hover {
+  background: rgba(255,255,255,0.25);
+  }
