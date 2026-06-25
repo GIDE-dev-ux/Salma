@@ -118,23 +118,35 @@ function addMessage(role, text, timestamp = Date.now()) {
 `;
 
   chatContainer.appendChild(bubble);
-  const copyBtn = bubble.querySelector(".copy-btn");
 
-if (copyBtn) {
-  copyBtn.addEventListener("click", async () => {
+// Copy button for code blocks
+bubble.querySelectorAll("pre").forEach((pre) => {
+  const btn = document.createElement("button");
+
+  btn.className = "copy-code-btn";
+  btn.textContent = "📋 Copy";
+
+  btn.addEventListener("click", async () => {
+    const code =
+      pre.querySelector("code")?.innerText || "";
+
     try {
-  await navigator.clipboard.writeText(text);
-  copyBtn.textContent = "✅ Copied";
-} catch {
-  copyBtn.textContent = "❌ Failed";
-}
-    copyBtn.textContent = "✅ Copied";
+      await navigator.clipboard.writeText(code);
+      btn.textContent = "✅ Copied";
+    } catch {
+      btn.textContent = "❌ Failed";
+    }
 
     setTimeout(() => {
-      copyBtn.textContent = "📋 Copy";
+      btn.textContent = "📋 Copy";
     }, 2000);
   });
-}
+
+  pre.style.position = "relative";
+  pre.appendChild(btn);
+});
+
+const copyBtn = bubble.querySelector(".copy-btn");
 
 if (window.hljs) {
   bubble
