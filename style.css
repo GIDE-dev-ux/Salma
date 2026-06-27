@@ -148,11 +148,13 @@ body {
 .user {
   align-self: flex-end;
   background: linear-gradient(45deg, var(--primary), var(--secondary));
+  max-width: 75%;
 }
 
 .assistant {
   align-self: flex-start;
   background: var(--bg-bot);
+  max-width: 98%;
 }
 
 /* ================= INPUT ================= */
@@ -408,4 +410,4 @@ code {
 
 .copy-code-btn:hover {
   background: rgba(255,255,255,0.25);
-  }
+    }
