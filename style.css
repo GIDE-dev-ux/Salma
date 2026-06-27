@@ -185,9 +185,11 @@ input, textarea, select, button {
   color: white;
 
   resize: none;
-  overflow-y: hidden;
+  overflow-y: auto;
   min-height: 44px;
-  max-height: 200px;
+  max-height: 180px;
+
+  scrollbar-width: thin;
 }
 #userInput {
   font-size: 16px;
