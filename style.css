@@ -127,6 +127,7 @@ body {
 
 /* ================= MESSAGE ================= */
 .message {
+  max-width: 95%;
   padding: 14px;
   border-radius: 16px;
   line-height: 1.5;
