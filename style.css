@@ -226,7 +226,7 @@ button {
 /* ================= MOBILE ================= */
 @media (max-width: 768px) {
   .message {
-    max-width: 90%;
+    max-width: 98%;
   }
 }
 
