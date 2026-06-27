@@ -99,15 +99,8 @@ function addMessage(role, text, timestamp = Date.now()) {
       marked.parse(text || '')
     )
   : `<p>${text}</p>`;
-
-  bubble.innerHTML = `
+bubble.innerHTML = `
   ${content}
-
-  ${
-    role === "assistant"
-      ? `<button class="copy-btn">📋 Copy</button>`
-      : ""
-  }
 
   <div class="timestamp">
     ${new Date(timestamp).toLocaleTimeString([], {
@@ -116,11 +109,11 @@ function addMessage(role, text, timestamp = Date.now()) {
     })}
   </div>
 `;
-
   chatContainer.appendChild(bubble);
 
 // Copy button for code blocks
 bubble.querySelectorAll("pre").forEach((pre) => {
+  if (pre.querySelector(".copy-code-btn")) return;
   const btn = document.createElement("button");
 
   btn.className = "copy-code-btn";
@@ -146,7 +139,6 @@ bubble.querySelectorAll("pre").forEach((pre) => {
   pre.appendChild(btn);
 });
 
-const copyBtn = bubble.querySelector(".copy-btn");
 
 if (window.hljs) {
   bubble
