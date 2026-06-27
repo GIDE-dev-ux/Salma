@@ -340,12 +340,6 @@ if (
 } // Function closes here
 
 sendBtn.addEventListener('click', sendMessage);
-userInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
 
 userInput.addEventListener("input", () => {
   userInput.style.height = "auto";
