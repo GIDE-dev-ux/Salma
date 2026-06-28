@@ -2,10 +2,13 @@
 let chats = JSON.parse(localStorage.getItem("chats")) || {};
 let currentChatId =
   localStorage.getItem("currentChatId") || null;
-  let selectedModel =
+
+let selectedModel =
   localStorage.getItem("selectedModel") ||
   "llama-3.3-70b-versatile";
 
+let memorySummary =
+  localStorage.getItem("memorySummary") || "";
 // ===================== ELEMENTS =====================
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -271,7 +274,10 @@ userInput.style.height = 'auto';
   addTypingIndicator();
 
   try {
-  const apiMessages = chats[currentChatId].map(msg => ({
+  const recentMessages =
+  chats[currentChatId].slice(-40);
+
+const apiMessages = recentMessages.map(msg => ({
   role: msg.role,
   content: msg.content
 }));
@@ -282,9 +288,10 @@ const response = await fetch('/api/chat', {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    messages: apiMessages,
-    model: selectedModel
-  })
+  messages: apiMessages,
+  model: selectedModel,
+  memorySummary
+})
 });
 
   let data;
@@ -308,16 +315,33 @@ try {
   content: data.reply,
   timestamp: Date.now()
 });
-  const MAX_MESSAGES = 100;
+  const MAX_MESSAGES = 40;
 
 if (
   chats[currentChatId].length >
   MAX_MESSAGES
 ) {
+
+  const oldMessages =
+    chats[currentChatId].slice(0, 20);
+
+  const summary =
+    oldMessages
+      .map(msg =>
+        `${msg.role}: ${msg.content}`
+      )
+      .join("\n");
+
+  memorySummary +=
+    "\n" + summary;
+
+  localStorage.setItem(
+    "memorySummary",
+    memorySummary
+  );
+
   chats[currentChatId] =
-    chats[currentChatId].slice(
-      -MAX_MESSAGES
-    );
+    chats[currentChatId].slice(-20);
 }
   saveChats()
   renderChatList();
