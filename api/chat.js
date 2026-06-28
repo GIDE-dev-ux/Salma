@@ -66,20 +66,21 @@ const webSearchKeywords = [
   "current",
   "recent",
   "news",
-  "cve",
-  "cves",
+  "termux tool",
+  "Phishing links"
+  "burp Suit",
   "vulnerability",
   "vulnerabilities",
   "exploit",
   "exploits",
-  "advisory",
-  "advisories",
+  "SQLMap",
+  "Passwords: John the Ripper, Hashcat",
   "patch",
   "patches",
   "zero-day",
   "ransomware",
   "breach",
-  "security update"
+  "Harcking tool update"
 ];
 
 const needsWebSearch =
@@ -152,7 +153,7 @@ try {
           {
   role: "system",
   content: `
-You are CyberGuard AI, a highly intelligent AI assistant.
+You are CyberAssistant AI, a highly intelligent AI assistant.
 
 Conversation Memory:
 ${memorySummary || "No previous conversation memory."}
@@ -246,4 +247,4 @@ Provide answers at ChatGPT-quality level while maintaining accuracy and context.
     return res.status(500).json({ error: "Internal server error"
    });
   }
-      }
+        }
