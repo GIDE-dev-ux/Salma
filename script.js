@@ -57,7 +57,7 @@ function loadChat(id) {
   if (chat.length === 0) {
     addMessage(
  "assistant",
- "👋 Hi, I'm CyberGuard AI.\nHow can I help you today?"
+ "👋 Hi, I'm CyberAssistant AI.\nHow can I help you today?"
 );
   } else {
     chat.forEach(msg => {
