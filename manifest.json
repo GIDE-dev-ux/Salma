@@ -1,14 +1,16 @@
 {
-  "name": "BABI-Bot AI Assistant",
+  "name": "BABI-Bot",
   "short_name": "BABI-Bot",
-  "description": "AI assistant for coding, cybersecurity, and tech support.",
-  "id": "/",
   "start_url": "/",
-  "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
-  "orientation": "portrait",
-  "lang": "en",
-  "background_color": "#0a0a0a",
-  "theme_color": "#ff0080"
+  "background_color": "#000000",
+  "theme_color": "#ff0080",
+  "description": "AI CyberAssistant Chatbot",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
