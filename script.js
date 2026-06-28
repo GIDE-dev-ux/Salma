@@ -325,24 +325,51 @@ if (
   const oldMessages =
     chats[currentChatId].slice(0, 20);
 
-  const summary =
+  const textToSummarize =
     oldMessages
       .map(msg =>
         `${msg.role}: ${msg.content}`
       )
       .join("\n");
 
-  memorySummary +=
-    "\n" + summary;
+  try {
 
-  localStorage.setItem(
-    "memorySummary",
-    memorySummary
-  );
+    const summaryResponse =
+      await fetch("/api/summarize", {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify({
+          text: textToSummarize,
+          existingMemory: memorySummary
+        })
+      });
+
+    const summaryData =
+      await summaryResponse.json();
+
+    memorySummary =
+      summaryData.summary ||
+      memorySummary;
+
+    localStorage.setItem(
+      "memorySummary",
+      memorySummary
+    );
+
+  } catch (err) {
+    console.error(
+      "Memory summary failed",
+      err
+    );
+  }
 
   chats[currentChatId] =
     chats[currentChatId].slice(-20);
 }
+
   saveChats()
   renderChatList();
 
