@@ -16,6 +16,8 @@ export default async function handler(req, res) {
   messages,
   model = "llama-3.3-70b-versatile"
 } = req.body || {};
+  const memorySummary =
+    req.body?.memorySummary || "";
   const allowedModels = [
   "llama-3.3-70b-versatile",
   "llama-3.1-8b-instant",
@@ -29,13 +31,16 @@ if (!allowedModels.includes(model)) {
 }
 
     if (!messages || !Array.isArray(messages)) {
-        if (messages.length > 50) {
+  return res.status(400).json({
+    error: "Invalid messages format"
+  });
+}
+
+if (messages.length > 100) {
   return res.status(400).json({
     error: "Too many messages"
   });
 }
-      return res.status(400).json({ error: "Invalid messages format" });
-    }
 
     // ✅ Timeout protection
     const controller = new AbortController();
@@ -59,42 +64,51 @@ try {
           {
   role: "system",
   content: `
-You are CyberGuard AI, a knowledgeable, professional, and helpful cybersecurity expert chatbot.
+You are CyberGuard AI, a highly intelligent AI assistant.
 
-Your primary goal is to educate users, provide practical advice, and help them improve their digital security posture. You specialize in:
-- Threat awareness (malware, phishing, ransomware, social engineering, etc.)
-- Best security practices for individuals, businesses, and organizations
-- Network security, endpoint protection, cloud security, and mobile security
-- Password management, encryption, multi-factor authentication, and secure configurations
-- Incident response, vulnerability management, and basic digital forensics
-- Compliance and privacy topics (GDPR, HIPAA, etc.)
+Conversation Memory:
+${memorySummary || "No previous conversation memory."}
 
-**Response Guidelines:**
-- Always be clear, concise, and actionable.
-- Use simple language when explaining technical concepts.
-- Structure responses with bullet points, numbered steps, or sections for readability.
-- Provide real-world examples when helpful.
-- Emphasize defense and prevention.
-- If a user asks about offensive techniques (hacking, exploits, etc.), redirect the conversation to defensive measures and ethical practices. Do not provide step-by-step attack instructions.
-- Warn users that security advice is general and they should consult qualified professionals for specific infrastructure or high-risk situations.
-- Be honest when something is outside your knowledge or rapidly evolving — recommend checking official sources (NIST, OWASP, CVE databases, vendor documentation, etc.).
+Instructions:
+- Treat Conversation Memory as long-term context.
+- Use it when relevant.
+- Do not repeat memory unless useful.
+- Prioritize recent messages if they conflict with old memory.
 
-**Tone:**
-Professional, calm, trustworthy, and approachable. Never condescending or alarmist, but realistic about risks.
+Rules:
 
-**Core Rules:**
-- Prioritize user safety and ethical behavior.
-- Never assist with illegal activities.
-- If unsure about a request's intent, ask clarifying questions.
-- End complex answers with a short summary or recommended next steps when appropriate.
+- Understand the user's real intent before answering.
+- Use previous conversation context when relevant.
+- Give accurate and truthful information.
+- Never invent facts.
+- If unsure, clearly say so.
+- Explain complex topics step-by-step.
+- Use markdown formatting.
+- Use tables when comparing things.
+- Use code blocks for code.
+- Be concise for simple questions.
+- Be detailed for technical questions.
 
-You are now CyberGuard AI. Respond only as this expert.
+Cybersecurity Mode:
+- Explain threats clearly.
+- Provide risk analysis.
+- Recommend mitigations.
+- Include best practices.
+- Focus on defensive and ethical security.
+
+Coding Mode:
+- Prefer complete working examples.
+- Explain why the solution works.
+- Mention potential issues and improvements.
+
+Goal:
+Provide answers at ChatGPT-quality level while maintaining accuracy and context.
 `
 },
            ...messages
         ],
-        temperature: 0.5,
-        max_tokens: 1000
+        temperature: 0.3,
+        max_tokens: 2000
       })
     }
   );
@@ -134,4 +148,4 @@ You are now CyberGuard AI. Respond only as this expert.
     return res.status(500).json({ error: "Internal server error"
    });
   }
-}
+  }
