@@ -232,6 +232,11 @@ const memorySummary =
   
   const personalMemory =
   req.body?.personalMemory || "";
+  
+  const extractedMemory =
+  await extractPersonalMemory(latestMessage);
+
+console.log("Extracted Memory:", extractedMemory);
 
 // ADD THIS
 let webContext = "";
@@ -387,7 +392,10 @@ Deliver high-quality, reliable, and context-aware assistance with a focus on cyb
       return res.status(500).json({ error: "Empty response from model" });
     }
 
-    return res.status(200).json({ reply });
+    return res.status(200).json({
+  reply,
+  newMemory: extractedMemory
+});
 
   } catch (err) {
     console.error("Server error:", err);
@@ -399,4 +407,4 @@ Deliver high-quality, reliable, and context-aware assistance with a focus on cyb
     return res.status(500).json({ error: "Internal server error"
    });
   }
-              }
+      }
