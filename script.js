@@ -270,6 +270,7 @@ async function sendMessage() {
   
   const lowerText = text.toLowerCase().trim();
 
+// Show personal memory
 if (
   lowerText === "what do you remember about me?" ||
   lowerText === "show my memory" ||
@@ -284,6 +285,44 @@ if (
     addMessage(
       "assistant",
       `Here's what I currently remember about you:\n\n${personalMemory}`
+    );
+  }
+
+  return;
+}
+
+// Forget memory command
+if (lowerText.startsWith("forget ")) {
+
+  const memoryToForget = text.substring(7).trim();
+
+  const memories = personalMemory
+    ? personalMemory.split("\n")
+    : [];
+
+  const updatedMemories = memories.filter(memory =>
+    !memory.toLowerCase().includes(memoryToForget.toLowerCase())
+  );
+
+  if (updatedMemories.length === memories.length) {
+
+    addMessage(
+      "assistant",
+      "I couldn't find a matching memory to forget."
+    );
+
+  } else {
+
+    personalMemory = updatedMemories.join("\n");
+
+    localStorage.setItem(
+      "personalMemory",
+      personalMemory
+    );
+
+    addMessage(
+      "assistant",
+      "I've forgotten that information."
     );
   }
 
