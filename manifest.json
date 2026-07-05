@@ -1,0 +1,16 @@
+{
+  "name": "BABI",
+  "short_name": "BABI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ff0080",
+  "description": "Personal Cyber Assistant powered by AI",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
