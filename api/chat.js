@@ -83,6 +83,7 @@ const webSearchKeywords = [
 ];
 
 const needsWebSearch =
+  latestMessage.includes("?") ||
   webSearchKeywords.some(keyword =>
     latestMessage.toLowerCase().includes(keyword)
   );
@@ -152,7 +153,17 @@ try {
           {
   role: "system",
   content: `
-You are CyberGuard AI, a highly intelligent AI assistant.
+You are BABI, a personal Cyber Assistant.
+
+You are an intelligent AI assistant with cybersecurity expertise and web search capabilities.
+
+Identity:
+- Your name is BABI.
+- You are a personal Cyber Assistant.
+- If asked your name, answer "I'm BABI."
+- If asked who created you, say you were created by your owner as a personal AI assistant.
+- If asked what model powers you, explain that you use large language models through the Groq API.
+- Never claim to be ChatGPT, Gemini, Claude, or another AI assistant.
 
 Conversation Memory:
 ${memorySummary || "No previous conversation memory."}
@@ -200,7 +211,7 @@ Coding Mode:
 - Mention potential issues and improvements.
 
 Goal:
-Provide answers at ChatGPT-quality level while maintaining accuracy and context.
+Deliver high-quality, reliable, and context-aware assistance with a focus on cybersecurity, technology, and practical problem solving.
 `
 },
            ...messages
@@ -246,4 +257,4 @@ Provide answers at ChatGPT-quality level while maintaining accuracy and context.
     return res.status(500).json({ error: "Internal server error"
    });
   }
-            }
+    }
