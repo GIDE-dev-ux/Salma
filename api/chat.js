@@ -60,37 +60,52 @@ if (!messages || !Array.isArray(messages)) {
 const latestMessage =
   messages[messages.length - 1]?.content || "";
 
-const webSearchKeywords = [
+const lowerMessage = latestMessage.toLowerCase();
+
+const webSearchTriggers = [
   "latest",
   "today",
   "current",
   "recent",
   "news",
+  "breaking",
+  "update",
+  "updates",
   "cve",
   "cves",
   "vulnerability",
   "vulnerabilities",
   "exploit",
   "exploits",
+  "zero-day",
   "advisory",
   "advisories",
   "patch",
   "patches",
-  "zero-day",
   "ransomware",
   "breach",
-  "security update"
+  "security update",
+  "weather",
+  "forecast",
+  "stock",
+  "price",
+  "bitcoin",
+  "crypto",
+  "release",
+  "version"
 ];
 
-const needsWebSearch =
-  latestMessage.includes("?") ||
-  webSearchKeywords.some(keyword =>
-    latestMessage.toLowerCase().includes(keyword)
-  );
+const needsWebSearch = webSearchTriggers.some(trigger =>
+  lowerMessage.includes(trigger)
+);
 
 console.log(
   `Web Search: ${needsWebSearch ? "YES" : "NO"}`
 );
+
+if (needsWebSearch) {
+  console.log("Searching the web with Tavily...");
+}
 
 const memorySummary =
   req.body?.memorySummary || "";
@@ -257,4 +272,4 @@ Deliver high-quality, reliable, and context-aware assistance with a focus on cyb
     return res.status(500).json({ error: "Internal server error"
    });
   }
-    }
+}
