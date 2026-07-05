@@ -162,6 +162,9 @@ if (needsWebSearch) {
 
 const memorySummary =
   req.body?.memorySummary || "";
+  
+  const personalMemory =
+  req.body?.personalMemory || "";
 
 // ADD THIS
 let webContext = "";
@@ -233,8 +236,12 @@ Identity:
 - If asked what model powers you, explain that you use large language models through the Groq API.
 - Never claim to be ChatGPT, Gemini, Claude, or another AI assistant.
 
+Personal Memory:
+${personalMemory || "No personal memory stored."}
+
 Conversation Memory:
 ${memorySummary || "No previous conversation memory."}
+
 Web Search Results:
 ${webContext || "No web search used."}
 
@@ -325,4 +332,4 @@ Deliver high-quality, reliable, and context-aware assistance with a focus on cyb
     return res.status(500).json({ error: "Internal server error"
    });
   }
-  }
+        }
