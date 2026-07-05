@@ -29,6 +29,55 @@ async function searchWeb(query) {
     return [];
   }
 }
+async function shouldSearchWeb(message) {
+  try {
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          temperature: 0,
+          max_tokens: 5,
+          messages: [
+            {
+              role: "system",
+              content: `You decide whether a user's message requires current or real-time information.
+
+Reply with ONLY one word:
+
+YES = Needs current information from the web.
+NO = Can be answered from general knowledge.
+
+Do not explain your answer.`
+            },
+            {
+              role: "user",
+              content: message
+            }
+          ]
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    const answer =
+      data?.choices?.[0]?.message?.content
+        ?.trim()
+        ?.toUpperCase();
+
+    return answer === "YES";
+
+  } catch (err) {
+    console.error("Search decision failed:", err);
+    return false;
+  }
+        }
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
