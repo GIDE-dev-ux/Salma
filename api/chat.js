@@ -21,34 +21,10 @@ async function searchWeb(query) {
     );
 
     const data = await response.json();
-    
-    if (data.newMemory) {
 
-  // Avoid duplicate memories
-  const memories = personalMemory
-    ? personalMemory.split("\n")
-    : [];
+console.log("Tavily response:", JSON.stringify(data));
 
-  if (!memories.includes(data.newMemory)) {
-
-    memories.push(data.newMemory);
-
-    personalMemory = memories.join("\n");
-
-    localStorage.setItem(
-      "personalMemory",
-      personalMemory
-    );
-
-    console.log(
-      "Saved Personal Memory:",
-      data.newMemory
-    );
-  }
-}
-    console.log("Tavily response:", JSON.stringify(data));
-
-    return data.results || [];
+return data.results || [];
   } catch (err) {
     console.error("Tavily error:", err);
     return [];
@@ -171,6 +147,56 @@ Do not explain your answer.`
   }
 }
 
+async function updatePersonalMemory(existingMemory, newMemory) {
+  try {
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          temperature: 0,
+          max_tokens: 200,
+          messages: [
+            {
+              role: "system",
+              content: `You maintain a user's long-term memory.
+
+Existing memory:
+${existingMemory}
+
+New memory:
+${newMemory}
+
+Rules:
+- Replace outdated facts with newer ones.
+- Do not keep contradictory facts.
+- Remove duplicates.
+- Keep one fact per line.
+- Return ONLY the updated memory.
+- Do not explain your answer.`
+            }
+          ]
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    return (
+      data?.choices?.[0]?.message?.content?.trim() ||
+      existingMemory
+    );
+
+  } catch (err) {
+    console.error("Memory update failed:", err);
+    return existingMemory;
+  }
+}
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
