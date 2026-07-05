@@ -267,6 +267,28 @@ async function sendMessage() {
     
   const text = userInput.value.trim();
   if (!text) return;
+  
+  const lowerText = text.toLowerCase().trim();
+
+if (
+  lowerText === "what do you remember about me?" ||
+  lowerText === "show my memory" ||
+  lowerText === "show memory"
+) {
+  if (!personalMemory.trim()) {
+    addMessage(
+      "assistant",
+      "I don't have any personal memories stored yet."
+    );
+  } else {
+    addMessage(
+      "assistant",
+      `Here's what I currently remember about you:\n\n${personalMemory}`
+    );
+  }
+
+  return;
+}
 
   sendBtn.disabled = true;
   userInput.disabled = true;
@@ -313,6 +335,31 @@ const response = await fetch('/api/chat', {
 
 try {
   data = await response.json();
+  
+  if (data.newMemory) {
+
+  const memories = personalMemory
+    ? personalMemory.split("\n")
+    : [];
+
+  if (!memories.includes(data.newMemory)) {
+
+    memories.push(data.newMemory);
+
+    personalMemory = memories.join("\n");
+
+    localStorage.setItem(
+      "personalMemory",
+      personalMemory
+    );
+
+    console.log(
+      "Saved Personal Memory:",
+      data.newMemory
+    );
+  }
+}
+
 } catch {
   throw new Error("Invalid server response");
 }
