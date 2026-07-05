@@ -79,6 +79,73 @@ Do not explain your answer.`
   }
 }
 
+async function extractPersonalMemory(message) {
+  try {
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          temperature: 0,
+          max_tokens: 50,
+          messages: [
+            {
+              role: "system",
+              content: `You extract long-term personal facts from a user's message.
+
+Return ONLY the important long-term fact.
+
+Examples:
+
+User: My name is John.
+Output: User's name is John.
+
+User: I use Kali Linux.
+Output: User uses Kali Linux.
+
+User: My favorite programming language is Python.
+Output: User's favorite programming language is Python.
+
+User: I'm building a chatbot.
+Output: User is building a chatbot.
+
+If the message contains no useful long-term information, reply with:
+
+NONE
+
+Do not explain your answer.`
+            },
+            {
+              role: "user",
+              content: message
+            }
+          ]
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    const memory =
+      data?.choices?.[0]?.message?.content?.trim();
+
+    if (!memory || memory.toUpperCase() === "NONE") {
+      return null;
+    }
+
+    return memory;
+
+  } catch (err) {
+    console.error("Memory extraction failed:", err);
+    return null;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -332,4 +399,4 @@ Deliver high-quality, reliable, and context-aware assistance with a focus on cyb
     return res.status(500).json({ error: "Internal server error"
    });
   }
-        }
+              }
