@@ -9,6 +9,8 @@ let selectedModel =
 
 let memorySummary =
   localStorage.getItem("memorySummary") || "";
+  let personalMemory =
+  localStorage.getItem("personalMemory") || "";
 // ===================== ELEMENTS =====================
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -302,7 +304,8 @@ const response = await fetch('/api/chat', {
   body: JSON.stringify({
   messages: apiMessages,
   model: selectedModel,
-  memorySummary
+  memorySummary,
+  personalMemory
 })
 });
 
