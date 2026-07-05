@@ -77,7 +77,7 @@ Do not explain your answer.`
     console.error("Search decision failed:", err);
     return false;
   }
-        }
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -144,9 +144,13 @@ const webSearchTriggers = [
   "version"
 ];
 
-const needsWebSearch = webSearchTriggers.some(trigger =>
+let needsWebSearch = webSearchTriggers.some(trigger =>
   lowerMessage.includes(trigger)
 );
+
+if (!needsWebSearch) {
+  needsWebSearch = await shouldSearchWeb(latestMessage);
+}
 
 console.log(
   `Web Search: ${needsWebSearch ? "YES" : "NO"}`
@@ -321,4 +325,4 @@ Deliver high-quality, reliable, and context-aware assistance with a focus on cyb
     return res.status(500).json({ error: "Internal server error"
    });
   }
-}
+  }
