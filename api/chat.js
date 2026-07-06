@@ -289,6 +289,20 @@ const memorySummary =
 
 console.log("Extracted Memory:", extractedMemory);
 
+let updatedPersonalMemory = personalMemory;
+
+if (extractedMemory) {
+  updatedPersonalMemory = await updatePersonalMemory(
+    personalMemory,
+    extractedMemory
+  );
+
+  console.log(
+    "Updated Personal Memory:",
+    updatedPersonalMemory
+  );
+}
+
 // ADD THIS
 let webContext = "";
 
@@ -445,7 +459,8 @@ Deliver high-quality, reliable, and context-aware assistance with a focus on cyb
 
     return res.status(200).json({
   reply,
-  newMemory: extractedMemory
+  newMemory: extractedMemory,
+  updatedPersonalMemory
 });
 
   } catch (err) {
@@ -458,4 +473,4 @@ Deliver high-quality, reliable, and context-aware assistance with a focus on cyb
     return res.status(500).json({ error: "Internal server error"
    });
   }
-      }
+          }
