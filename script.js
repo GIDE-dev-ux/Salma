@@ -374,9 +374,24 @@ const response = await fetch('/api/chat', {
 
 try {
   data = await response.json();
-  
-  if (data.newMemory) {
 
+  if (data.updatedPersonalMemory) {
+
+  personalMemory = data.updatedPersonalMemory;
+
+  localStorage.setItem(
+    "personalMemory",
+    personalMemory
+  );
+
+  console.log(
+    "Updated Personal Memory:",
+    personalMemory
+  );
+
+} else if (data.newMemory) {
+
+  // Fallback for older backend versions
   const memories = personalMemory
     ? personalMemory.split("\n")
     : [];
@@ -391,13 +406,8 @@ try {
       "personalMemory",
       personalMemory
     );
-
-    console.log(
-      "Saved Personal Memory:",
-      data.newMemory
-    );
   }
-}
+  }
 
 } catch {
   throw new Error("Invalid server response");
