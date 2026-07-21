@@ -1,3 +1,4 @@
+import { getSearchPrompt } from "./lib/prompts/searchPrompt.js";
 import { getMemoryPrompt } from "./lib/prompts/memoryPrompt.js";
 import { getSystemPrompt } from "./lib/prompts/systemPrompt.js";
 export const config = {
@@ -49,14 +50,7 @@ async function shouldSearchWeb(message) {
           messages: [
             {
               role: "system",
-              content: `You decide whether a user's message requires current or real-time information.
-
-Reply with ONLY one word:
-
-YES = Needs current information from the web.
-NO = Can be answered from general knowledge.
-
-Do not explain your answer.`
+              content: getSearchPrompt()
             },
             {
               role: "user",
