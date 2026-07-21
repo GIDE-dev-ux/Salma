@@ -1,3 +1,4 @@
+import { getMemoryPrompt } from "./lib/prompts/memoryPrompt.js";
 import { getSystemPrompt } from "./lib/prompts/systemPrompt.js";
 export const config = {
   maxDuration: 30 // safer for non-streaming
@@ -98,29 +99,7 @@ async function extractPersonalMemory(message) {
           messages: [
             {
               role: "system",
-              content: `You extract long-term personal facts from a user's message.
-
-Return ONLY the important long-term fact.
-
-Examples:
-
-User: My name is John.
-Output: User's name is John.
-
-User: I use Kali Linux.
-Output: User uses Kali Linux.
-
-User: My favorite programming language is Python.
-Output: User's favorite programming language is Python.
-
-User: I'm building a chatbot.
-Output: User is building a chatbot.
-
-If the message contains no useful long-term information, reply with:
-
-NONE
-
-Do not explain your answer.`
+               content: getMemoryPrompt()
             },
             {
               role: "user",
@@ -415,4 +394,4 @@ try {
     return res.status(500).json({ error: "Internal server error"
    });
   }
-      }
+        }
