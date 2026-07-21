@@ -30,6 +30,45 @@ export async function searchWeb(query) {
 }
 
 export async function shouldSearchWeb(message) {
+  const webSearchTriggers = [
+    "latest",
+    "today",
+    "current",
+    "recent",
+    "news",
+    "breaking",
+    "update",
+    "updates",
+    "cve",
+    "cves",
+    "vulnerability",
+    "vulnerabilities",
+    "exploit",
+    "exploits",
+    "zero-day",
+    "advisory",
+    "advisories",
+    "patch",
+    "patches",
+    "ransomware",
+    "breach",
+    "security update",
+    "weather",
+    "forecast",
+    "stock",
+    "price",
+    "bitcoin",
+    "crypto",
+    "release",
+    "version"
+  ];
+
+  const lowerMessage = message.toLowerCase();
+
+  if (webSearchTriggers.some(trigger => lowerMessage.includes(trigger))) {
+    return true;
+  }
+
   try {
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -70,4 +109,4 @@ export async function shouldSearchWeb(message) {
     console.error("Search decision failed:", err);
     return false;
   }
-      }
+}
