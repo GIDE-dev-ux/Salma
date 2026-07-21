@@ -1,3 +1,4 @@
+import { getMemoryUpdatePrompt } from "./lib/prompts/memoryUpdatePrompt.js";
 import { getSearchPrompt } from "./lib/prompts/searchPrompt.js";
 import { getMemoryPrompt } from "./lib/prompts/memoryPrompt.js";
 import { getSystemPrompt } from "./lib/prompts/systemPrompt.js";
@@ -136,25 +137,14 @@ async function updatePersonalMemory(existingMemory, newMemory) {
           temperature: 0,
           max_tokens: 200,
           messages: [
-            {
-              role: "system",
-              content: `You maintain a user's long-term memory.
-
-Existing memory:
-${existingMemory}
-
-New memory:
-${newMemory}
-
-Rules:
-- Replace outdated facts with newer ones.
-- Do not keep contradictory facts.
-- Remove duplicates.
-- Keep one fact per line.
-- Return ONLY the updated memory.
-- Do not explain your answer.`
-            }
-          ]
+  {
+    role: "system",
+    content: getMemoryUpdatePrompt(
+      existingMemory,
+      newMemory
+    )
+  }
+]
         })
       }
     );
@@ -388,4 +378,4 @@ try {
     return res.status(500).json({ error: "Internal server error"
    });
   }
-        }
+      }
