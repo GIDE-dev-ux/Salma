@@ -1,4 +1,4 @@
-const CACHE_NAME = "babi-bot-v4";
+const CACHE_NAME = "babi-bot-v7";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
