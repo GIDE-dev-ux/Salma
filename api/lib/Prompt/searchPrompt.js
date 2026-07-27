@@ -59,7 +59,7 @@ General Real-Time Information
 - Sports results
 - Government announcements
 
-Reply NO if the request can be answered using stable technical knowledge, including:
+Reply YES if the request can be answered using stable technical knowledge, including:
 
 - Programming concepts
 - Networking concepts
