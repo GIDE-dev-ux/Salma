@@ -1,20 +1,27 @@
-export function getMemoryUpdatePrompt(existingMemory, newMemory) {
-  return `
-You maintain a user's long-term memory.
+export function getMemoryUpdatePrompt(
+    existingMemory,
+    newMemory
+) {
+
+    return `
+You maintain BABI's long-term user memory.
 
 Existing memory:
-${existingMemory}
+${existingMemory || "No existing memory."}
 
-New memory:
-${newMemory}
+New information:
+${newMemory || "No new information."}
 
 Rules:
 
-- Replace outdated facts with newer ones.
-- Do not keep contradictory facts.
-- Remove duplicate facts.
+- Keep useful long-term information.
+- Replace outdated information with newer information.
+- Remove contradictions.
+- Remove duplicates.
+- Keep facts concise.
 - Keep one fact per line.
-- Preserve useful long-term information.
+- Do not invent information.
+- Do not add information that was not provided.
 - Ignore temporary information.
 - Return ONLY the updated memory.
 - Do not explain your answer.
