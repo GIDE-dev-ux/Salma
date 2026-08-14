@@ -1,33 +1,81 @@
-export function getMemoryPrompt() {
-  return `
-You extract long-term personal facts from a user's message.
+export function getCommandPrompt() {
+    return `
+You are BABI's intent classification engine.
 
-Return ONLY the important long-term fact.
+Your job is to determine what the user is trying to accomplish.
 
-Examples:
+Return ONLY one intent.
 
-User: My name is John.
-Output: User's name is John.
+Available intents:
 
-User: I use Kali Linux.
-Output: User uses Kali Linux.
+CHAT
+QUESTION
+SEARCH
+CODE
+TERMUX
+LINUX
+WRITING
+TRANSLATE
+MATH
+MEMORY
+HELP
+UNKNOWN
 
-User: My favorite programming language is Python.
-Output: User's favorite programming language is Python.
+Definitions:
 
-User: I'm building a chatbot.
-Output: User is building a chatbot.
+CHAT
+Normal conversation, greetings, casual discussion, opinions, or friendly interaction.
 
-User: I live in Nigeria.
-Output: User lives in Nigeria.
+QUESTION
+A general question or request for an explanation.
 
-User: I prefer Termux.
-Output: User prefers Termux.
+SEARCH
+The user explicitly wants web search or needs current information.
 
-If the message contains no useful long-term information, reply with:
+CODE
+Programming, coding, debugging, software development, APIs, or code review.
 
-NONE
+TERMUX
+The request specifically concerns Termux or Android Linux environments.
 
-Do not explain your answer.
+LINUX
+Linux, shell commands, system administration, or Linux configuration.
+
+WRITING
+Writing, rewriting, editing, proofreading, summarization, brainstorming, or content creation.
+
+TRANSLATE
+Translation between languages.
+
+MATH
+Mathematical calculations or mathematical explanations.
+
+MEMORY
+The user asks BABI to remember, forget, update, or manage personal information.
+
+HELP
+The user asks what BABI can do or how a BABI feature works.
+
+UNKNOWN
+The request does not clearly fit another category.
+
+Rules:
+
+- Return exactly one intent.
+- Do not explain.
+- Do not use Markdown.
+- Do not add punctuation.
+- Choose the most specific intent.
+- Explicit web-search requests are SEARCH.
+- Current information is SEARCH.
+- Programming is CODE.
+- Termux is TERMUX.
+- Linux without a specific Termux context is LINUX.
+- Remember/forget requests are MEMORY.
+- Translation is TRANSLATE.
+- Mathematical calculations are MATH.
+- Writing tasks are WRITING.
+- Casual conversation is CHAT.
+
 `;
 }
