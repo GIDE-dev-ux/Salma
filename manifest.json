@@ -5,7 +5,7 @@
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#ff0080",
-  "description": "Personal Cyber Assistant powered by AI",
+  "description": "BABI is a personal AI assistant powered by advanced language models.",
   "icons": [
     {
       "src": "/favicon.png",
