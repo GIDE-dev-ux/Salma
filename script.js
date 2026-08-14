@@ -46,8 +46,8 @@ function createNewChat() {
   currentChatId = id;
 
   saveChats();
-loadChat(id);
-renderChatList();
+  loadChat(id);
+  renderChatList();
 }
 
 function loadChat(id) {
@@ -56,36 +56,18 @@ function loadChat(id) {
 
   const chat = chats[id] || [];
 
-  if (chat.length === 0) {
+  chat.forEach(msg => {
     addMessage(
-  "assistant",
-  `👋 Hello! I'm **BABI**, your personal Cyber Assistant.
-
-I can help with:
-
-• Cybersecurity
-• Programming
-• Linux
-• Networking
-• AI
-• Research
-• Technical troubleshooting
-
-How can I help you today?`
-);
-  } else {
-    chat.forEach(msg => {
-      addMessage(
-  msg.role,
-  msg.content,
-  msg.timestamp
-);
-    });
-  }
+      msg.role,
+      msg.content,
+      msg.timestamp
+    );
+  });
 
   saveChats();
-renderChatList();
+  renderChatList();
 }
+
 // ===================== CLEAR CHAT =====================
 function clearCurrentChat() {
   if (!currentChatId) return;
