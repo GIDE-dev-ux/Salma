@@ -9,10 +9,19 @@
     content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
   >
 
-  <title>BABI - Cyber Assistant</title>
+  <title>BABI - Personal AI Assistant</title>
 
+  <meta
+    name="description"
+    content="BABI is a personal AI assistant for questions, programming, research, writing, and everyday tasks."
+  >
+
+  <meta name="theme-color" content="#ff0080">
+
+  <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/favicon.png">
-  <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="/style.css">
 
   <!-- Markdown -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -36,111 +45,116 @@
 <body>
 
   <div class="app">
+
     <!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar">
 
-  <div class="sidebar-header">
-    <button type="button" id="newChatBtn">
-      + New Chat
-    </button>
+      <div class="sidebar-header">
+        <button type="button" id="newChatBtn">
+          + New Chat
+        </button>
+      </div>
+
+      <div class="chat-list" id="chatList"></div>
+
+      <div class="sidebar-footer">
+
+        <select id="modelSelector" aria-label="Select AI model">
+
+          <option value="llama-3.3-70b-versatile">
+            Llama 3.3 70B
+          </option>
+
+          <option value="llama-3.1-8b-instant">
+            Llama 3.1 8B
+          </option>
+
+          <option value="openai/gpt-oss-120b">
+            GPT-OSS 120B
+          </option>
+
+        </select>
+
+        <button type="button" id="exportBtn">
+          Export Chat
+        </button>
+
+      </div>
+
+    </aside>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div id="sidebarOverlay"></div>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <div class="header">
+
+        <button
+          type="button"
+          id="menuBtn"
+          aria-label="Open menu"
+        >
+          ☰
+        </button>
+
+        <img
+          src="/favicon.png"
+          alt="BABI"
+          class="logo"
+        >
+
+        <h2>BABI</h2>
+
+        <button
+          type="button"
+          id="clearChatBtn"
+          aria-label="Clear chat"
+        >
+          🗑️
+        </button>
+
+      </div>
+
+      <div class="chat-container">
+
+        <div
+          class="messages"
+          id="chatContainer"
+        ></div>
+
+        <div class="input-area">
+
+          <textarea
+            id="userInput"
+            placeholder="Ask BABI anything..."
+            autocomplete="off"
+            spellcheck="false"
+            rows="1"
+          ></textarea>
+
+          <button
+            type="button"
+            id="sendBtn"
+            aria-label="Send message"
+          >
+            ➤
+          </button>
+
+        </div>
+
+      </div>
+
+    </main>
+
   </div>
 
-  <div class="chat-list" id="chatList"></div>
+  <!-- DOMPurify -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
 
-  <div class="sidebar-footer">
+  <!-- Application -->
+  <script src="/script.js"></script>
 
-    <select id="modelSelector">
-
-      <option value="llama-3.3-70b-versatile">
-        Llama 3.3 70B
-      </option>
-
-      <option value="llama-3.1-8b-instant">
-        Llama 3.1 8B
-      </option>
-
-            <option value="openai/gpt-oss-120b">
-        GPT-OSS 120B
-      </option>
-
-    </select>
-
-    <button type="button" id="exportBtn">
-      Export Chat
-    </button>
-
-  </div>
-
-</aside>
-
-<!-- Sidebar Overlay -->
-<div id="sidebarOverlay"></div>
-
-<!-- MAIN -->
-<main class="main">
-
-  <div class="header">
-
-    <button
-      type="button"
-      id="menuBtn"
-      aria-label="Open menu"
-    >
-      ☰
-    </button>
-
-    <img
-      src="/favicon.png"
-      alt="BABI"
-      class="logo"
-    >
-
-    <h2>BABI</h2>
-
-    <button
-      type="button"
-      id="clearChatBtn"
-      aria-label="Clear chat"
-    >
-      🗑️
-    </button>
-
-  </div>
-
-  <div class="chat-container">
-
-    <div
-      class="messages"
-      id="chatContainer"
-    ></div>
-
-    <div class="input-area">
-
-      <textarea
-  id="userInput"
-  placeholder="Ask BABI anything..."
-  autocomplete="off"
-  spellcheck="false"
-  rows="1"
-></textarea>
-
-      <button
-        type="button"
-        id="sendBtn"
-        aria-label="Send message"
-      >
-        ➤
-      </button>
-
-    </div>
-
-  </div>
-
-</main>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
-<script src="script.js"></script>
 </body>
-</html>
+    </html>
