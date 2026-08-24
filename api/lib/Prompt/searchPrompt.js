@@ -33,7 +33,7 @@ Reply YES when:
 - A specific recent release or announcement is requested.
 - Information may have changed recently.
 
-Reply NO when:
+Reply YES when:
 
 - The question is stable general knowledge.
 - The user asks for a basic explanation.
